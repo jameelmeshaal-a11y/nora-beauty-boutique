@@ -2,10 +2,33 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import heroLipsticks from "@/assets/hero-lipsticks.png";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
+import heroBannerCarousel from "@/assets/hero-banner-carousel.jpg";
+import heroLipsCarousel from "@/assets/hero-lips-carousel.jpg";
 
 const HeroSection = () => {
-  const { language, t, isRTL } = useLanguage();
+  const { language, isRTL } = useLanguage();
+  
+  const plugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false })
+  );
+
+  const heroImages = [
+    {
+      src: heroBannerCarousel,
+      alt: "Noura Beauty - Lipsticks & Glosses Collection"
+    },
+    {
+      src: heroLipsCarousel,
+      alt: "Noura Beauty - Glossy Lips"
+    }
+  ];
   
   const content = {
     ar: {
@@ -102,23 +125,43 @@ const HeroSection = () => {
                 <div key={index} className="text-center">
                   <p className="text-3xl font-bold text-primary">{stat.value}</p>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  {index < c.stats.length - 1 && (
-                    <div className="hidden" />
-                  )}
                 </div>
               ))}
             </div>
           </div>
           
-          {/* Image */}
+          {/* Image Carousel */}
           <div className="order-1 lg:order-2">
             <div className="relative">
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-primary/20 to-accent/20 blur-2xl" />
-              <img
-                src={heroLipsticks}
-                alt="Noura Beauty Products - Lipsticks Collection"
-                className="relative rounded-3xl shadow-2xl object-cover w-full"
-              />
+              <Carousel
+                plugins={[plugin.current]}
+                className="w-full"
+                opts={{
+                  align: "start",
+                  loop: true,
+                  direction: isRTL ? "rtl" : "ltr",
+                }}
+              >
+                <CarouselContent>
+                  {heroImages.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          className="w-full h-[400px] md:h-[500px] object-cover transition-transform duration-700 hover:scale-105"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+              {/* Carousel indicators */}
+              <div className="flex justify-center gap-2 mt-4">
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-primary/30" />
+              </div>
             </div>
           </div>
         </div>
