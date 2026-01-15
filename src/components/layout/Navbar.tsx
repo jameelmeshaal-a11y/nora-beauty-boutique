@@ -26,9 +26,18 @@ const Navbar = () => {
   const { t, language, isRTL } = useLanguage();
   const location = useLocation();
   
+  const mainCategories = [
+    { href: "/category?category=cosmetics", label: language === 'ar' ? 'مستحضرات التجميل' : 'Cosmetics' },
+    { href: "/category?category=fragrance", label: language === 'ar' ? 'العطور' : 'Fragrance' },
+    { href: "/category?category=skin", label: language === 'ar' ? 'العناية بالبشرة' : 'Skincare' },
+    { href: "/category?category=hair", label: language === 'ar' ? 'العناية بالشعر' : 'Hair Care' },
+    { href: "/category?category=discover", label: language === 'ar' ? 'اكتشف' : 'Discover' },
+  ];
+  
   const navLinks = [
     { href: "/", label: t('nav.home') },
     { href: "/products", label: t('nav.products') },
+    ...mainCategories,
     { href: "/about", label: t('nav.about') },
   ];
 
