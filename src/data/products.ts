@@ -10,7 +10,7 @@ export interface Product {
   id: string;
   name: string;
   nameEn: string;
-  category: string;
+  category?: string;
   price: number;
   originalPrice?: number;
   image: string;
@@ -24,6 +24,9 @@ export interface Product {
   lowStockThreshold?: number;
   supplierName?: string;
   supplierNameAr?: string;
+  hasSample?: boolean;
+  sampleDescription?: string;
+  sampleDescriptionAr?: string;
 }
 
 export const products: Product[] = [
