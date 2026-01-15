@@ -33,13 +33,13 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('favorites')
+        .from('favorites' as any)
         .select('product_id')
         .eq('user_id', user.id);
 
       if (error) throw error;
       
-      setFavorites(data?.map(f => f.product_id) || []);
+      setFavorites((data as any)?.map((f: any) => f.product_id) || []);
     } catch (error) {
       console.error('Error fetching favorites:', error);
     } finally {
@@ -67,7 +67,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
       if (isCurrentlyFavorite) {
         // Remove from favorites
         const { error } = await supabase
-          .from('favorites')
+          .from('favorites' as any)
           .delete()
           .eq('user_id', user.id)
           .eq('product_id', productId);
@@ -82,7 +82,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
       } else {
         // Add to favorites
         const { error } = await supabase
-          .from('favorites')
+          .from('favorites' as any)
           .insert({
             user_id: user.id,
             product_id: productId

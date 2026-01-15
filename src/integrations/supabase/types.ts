@@ -62,6 +62,35 @@ export type Database = {
         }
         Relationships: []
       }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           id: string
@@ -140,6 +169,50 @@ export type Database = {
         }
         Relationships: []
       }
+      product_variants: {
+        Row: {
+          color_code: string
+          created_at: string
+          id: string
+          image_url: string | null
+          in_stock: boolean | null
+          name: string
+          name_ar: string | null
+          price_adjustment: number | null
+          product_id: string
+        }
+        Insert: {
+          color_code: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          in_stock?: boolean | null
+          name: string
+          name_ar?: string | null
+          price_adjustment?: number | null
+          product_id: string
+        }
+        Update: {
+          color_code?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          in_stock?: boolean | null
+          name?: string
+          name_ar?: string | null
+          price_adjustment?: number | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           brand: string | null
@@ -151,6 +224,7 @@ export type Database = {
           image_url: string | null
           images: string[] | null
           in_stock: boolean | null
+          is_active: boolean | null
           is_bestseller: boolean | null
           is_featured: boolean | null
           is_new: boolean | null
@@ -160,6 +234,7 @@ export type Database = {
           price: number
           rating: number | null
           reviews_count: number | null
+          shades_count: number | null
           updated_at: string
         }
         Insert: {
@@ -172,6 +247,7 @@ export type Database = {
           image_url?: string | null
           images?: string[] | null
           in_stock?: boolean | null
+          is_active?: boolean | null
           is_bestseller?: boolean | null
           is_featured?: boolean | null
           is_new?: boolean | null
@@ -181,6 +257,7 @@ export type Database = {
           price: number
           rating?: number | null
           reviews_count?: number | null
+          shades_count?: number | null
           updated_at?: string
         }
         Update: {
@@ -193,6 +270,7 @@ export type Database = {
           image_url?: string | null
           images?: string[] | null
           in_stock?: boolean | null
+          is_active?: boolean | null
           is_bestseller?: boolean | null
           is_featured?: boolean | null
           is_new?: boolean | null
@@ -202,6 +280,7 @@ export type Database = {
           price?: number
           rating?: number | null
           reviews_count?: number | null
+          shades_count?: number | null
           updated_at?: string
         }
         Relationships: []
