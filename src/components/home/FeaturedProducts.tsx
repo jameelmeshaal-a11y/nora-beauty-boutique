@@ -7,6 +7,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
+// Import featured product images
+import honeyLipOil from "@/assets/products/honey-lip-oil.jpg";
+import roseGoldShimmerGloss from "@/assets/products/rose-gold-shimmer-gloss.jpg";
+import berryPlumLipstick from "@/assets/products/berry-plum-lipstick.jpg";
+import pinkShimmerLipGloss from "@/assets/products/pink-shimmer-lip-gloss.jpg";
+
+// Map for local assets
+const localAssets: Record<string, string> = {
+  '/src/assets/products/honey-lip-oil.jpg': honeyLipOil,
+  '/src/assets/products/rose-gold-shimmer-gloss.jpg': roseGoldShimmerGloss,
+  '/src/assets/products/berry-plum-lipstick.jpg': berryPlumLipstick,
+  '/src/assets/products/pink-shimmer-lip-gloss.jpg': pinkShimmerLipGloss,
+};
+
 interface Product {
   id: string;
   name: string;
@@ -36,6 +50,15 @@ interface ProductVariant {
   in_stock: boolean | null;
 }
 
+const getImageUrl = (imageUrl: string | null): string => {
+  if (!imageUrl) return '/placeholder.svg';
+  // Check if it's a local asset path
+  if (localAssets[imageUrl]) {
+    return localAssets[imageUrl];
+  }
+  return imageUrl;
+};
+
 const FeaturedProducts = () => {
   const { language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
@@ -49,9 +72,9 @@ const FeaturedProducts = () => {
           .from('products')
           .select('id, name, name_ar, brand, price, original_price, image_url, images, shades_count, rating, reviews_count, is_bestseller, is_new, is_featured, in_stock, has_free_sample')
           .eq('is_active', true)
-          .or('is_bestseller.eq.true,is_new.eq.true,is_featured.eq.true')
-          .order('is_bestseller', { ascending: false })
-          .limit(8);
+          .eq('is_featured', true)
+          .order('created_at', { ascending: false })
+          .limit(4);
 
         if (error) throw error;
         setProducts(data || []);
@@ -118,7 +141,7 @@ const FeaturedProducts = () => {
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.slice(0, 8).map((product) => (
+            {products.slice(0, 4).map((product) => (
               <ProductCard
                 key={product.id}
                 product={{
@@ -128,7 +151,7 @@ const FeaturedProducts = () => {
                   brand: product.brand || '',
                   price: product.price,
                   originalPrice: product.original_price || undefined,
-                  image: product.image_url || '/placeholder.svg',
+                  image: getImageUrl(product.image_url),
                   rating: product.rating || 4.5,
                   reviews: product.reviews_count || 0,
                   shades: product.shades_count || 1,
