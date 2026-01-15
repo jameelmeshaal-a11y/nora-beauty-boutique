@@ -19,7 +19,8 @@ import {
   ChevronLeft,
   Save,
   Loader2,
-  Star
+  Star,
+  Image
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import FeaturedProductsManager from "@/components/admin/FeaturedProductsManager";
+import SiteImagesManager from "@/components/admin/SiteImagesManager";
 
 interface Product {
   id: string;
@@ -279,6 +281,7 @@ const AdminDashboard = () => {
     { id: "overview", icon: LayoutDashboard, label: t('admin.dashboard') },
     { id: "products", icon: Package, label: t('admin.products') },
     { id: "featured", icon: Star, label: t('admin.featured') },
+    { id: "images", icon: Image, label: language === 'ar' ? 'صور الواجهة' : language === 'ru' ? 'Изображения' : 'Site Images' },
     { id: "orders", icon: ShoppingCart, label: t('admin.orders') },
     { id: "customers", icon: Users, label: t('admin.customers') },
     { id: "analytics", icon: BarChart3, label: t('admin.analytics') },
@@ -766,6 +769,10 @@ const AdminDashboard = () => {
                 <p className="text-muted-foreground">قريباً - تحليلات متقدمة للمبيعات</p>
               </CardContent>
             </Card>
+          )}
+          
+          {activeTab === "images" && (
+            <SiteImagesManager />
           )}
           
           {activeTab === "settings" && (
