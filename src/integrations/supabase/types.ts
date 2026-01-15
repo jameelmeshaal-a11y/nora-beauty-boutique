@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          name_ar: string | null
+          parent_id: string | null
+          slug: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          name_ar?: string | null
+          parent_id?: string | null
+          slug: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          name_ar?: string | null
+          parent_id?: string | null
+          slug?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_info: {
         Row: {
           about: string | null
@@ -169,6 +216,44 @@ export type Database = {
         }
         Relationships: []
       }
+      product_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          product_id: string
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          product_id: string
+          rating: number
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          product_id?: string
+          rating?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variants: {
         Row: {
           color_code: string
@@ -176,10 +261,12 @@ export type Database = {
           id: string
           image_url: string | null
           in_stock: boolean | null
+          lip_image_url: string | null
           name: string
           name_ar: string | null
           price_adjustment: number | null
           product_id: string
+          stock_quantity: number | null
         }
         Insert: {
           color_code: string
@@ -187,10 +274,12 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean | null
+          lip_image_url?: string | null
           name: string
           name_ar?: string | null
           price_adjustment?: number | null
           product_id: string
+          stock_quantity?: number | null
         }
         Update: {
           color_code?: string
@@ -198,10 +287,12 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean | null
+          lip_image_url?: string | null
           name?: string
           name_ar?: string | null
           price_adjustment?: number | null
           product_id?: string
+          stock_quantity?: number | null
         }
         Relationships: [
           {
@@ -217,6 +308,7 @@ export type Database = {
         Row: {
           brand: string | null
           category: string
+          category_id: string | null
           created_at: string
           description: string | null
           description_ar: string | null
@@ -228,6 +320,7 @@ export type Database = {
           is_bestseller: boolean | null
           is_featured: boolean | null
           is_new: boolean | null
+          low_stock_threshold: number | null
           name: string
           name_ar: string | null
           original_price: number | null
@@ -235,11 +328,14 @@ export type Database = {
           rating: number | null
           reviews_count: number | null
           shades_count: number | null
+          stock_quantity: number | null
+          supplier_id: string | null
           updated_at: string
         }
         Insert: {
           brand?: string | null
           category: string
+          category_id?: string | null
           created_at?: string
           description?: string | null
           description_ar?: string | null
@@ -251,6 +347,7 @@ export type Database = {
           is_bestseller?: boolean | null
           is_featured?: boolean | null
           is_new?: boolean | null
+          low_stock_threshold?: number | null
           name: string
           name_ar?: string | null
           original_price?: number | null
@@ -258,11 +355,14 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           shades_count?: number | null
+          stock_quantity?: number | null
+          supplier_id?: string | null
           updated_at?: string
         }
         Update: {
           brand?: string | null
           category?: string
+          category_id?: string | null
           created_at?: string
           description?: string | null
           description_ar?: string | null
@@ -274,6 +374,7 @@ export type Database = {
           is_bestseller?: boolean | null
           is_featured?: boolean | null
           is_new?: boolean | null
+          low_stock_threshold?: number | null
           name?: string
           name_ar?: string | null
           original_price?: number | null
@@ -281,9 +382,26 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           shades_count?: number | null
+          stock_quantity?: number | null
+          supplier_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -311,6 +429,96 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      store_settings: {
+        Row: {
+          allow_supplier_registration: boolean | null
+          free_shipping_threshold: number | null
+          id: string
+          min_order_amount: number | null
+          show_supplier_name: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          allow_supplier_registration?: boolean | null
+          free_shipping_threshold?: number | null
+          id?: string
+          min_order_amount?: number | null
+          show_supplier_name?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          allow_supplier_registration?: boolean | null
+          free_shipping_threshold?: number | null
+          id?: string
+          min_order_amount?: number | null
+          show_supplier_name?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          address_ar: string | null
+          commission_rate: number | null
+          company_name: string
+          company_name_ar: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string | null
+          description_ar: string | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          logo_url: string | null
+          rating: number | null
+          reviews_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          address_ar?: string | null
+          commission_rate?: number | null
+          company_name: string
+          company_name_ar?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          logo_url?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          address_ar?: string | null
+          commission_rate?: number | null
+          company_name?: string
+          company_name_ar?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          logo_url?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -347,7 +555,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "customer"
+      app_role: "admin" | "customer" | "supplier"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -475,7 +683,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "customer"],
+      app_role: ["admin", "customer", "supplier"],
     },
   },
 } as const
