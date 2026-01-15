@@ -13,7 +13,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCategories, Category } from '@/hooks/useCategories';
 import { supabase } from '@/integrations/supabase/client';
-import ProductCard from '@/components/product/ProductCard';
+import ProductCardKylie from '@/components/product/ProductCardKylie';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/cart/CartDrawer';
@@ -225,24 +225,25 @@ const CategoryPage = () => {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => (
-              <ProductCard
+              <ProductCardKylie
                 key={product.id}
                 product={{
                   id: product.id,
-                  name: product.name_ar || product.name,
-                  nameEn: product.name,
-                  category: product.category,
+                  name: product.name,
+                  name_ar: product.name_ar,
+                  brand: product.brand,
                   price: product.price,
-                  originalPrice: product.original_price,
-                  image: product.image_url || 'https://via.placeholder.com/400',
-                  shades: product.shades_count || 1,
-                  badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : product.original_price ? 'sale' : undefined,
-                  description: product.description_ar || product.description || '',
-                  rating: product.rating || 4.5,
-                  reviews: product.reviews_count || 0,
-                  inStock: product.in_stock ?? true,
-                  stockQuantity: product.stock_quantity,
-                  lowStockThreshold: product.low_stock_threshold,
+                  original_price: product.original_price,
+                  image_url: product.image_url,
+                  images: product.images,
+                  shades_count: product.shades_count,
+                  rating: product.rating,
+                  reviews_count: product.reviews_count,
+                  is_bestseller: product.is_bestseller,
+                  is_new: product.is_new,
+                  is_featured: product.is_featured,
+                  in_stock: product.in_stock,
+                  has_free_sample: product.has_free_sample,
                 }}
               />
             ))}
