@@ -26,9 +26,20 @@ interface Product {
   has_free_sample: boolean | null;
 }
 
+interface ProductVariant {
+  id: string;
+  product_id: string;
+  name: string;
+  name_ar: string | null;
+  color_code: string;
+  lip_image_url: string | null;
+  in_stock: boolean | null;
+}
+
 const FeaturedProducts = () => {
   const { language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
+  const [variants, setVariants] = useState<Map<string, ProductVariant[]>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -44,6 +55,25 @@ const FeaturedProducts = () => {
 
         if (error) throw error;
         setProducts(data || []);
+
+        // Fetch variants for all products
+        if (data && data.length > 0) {
+          const productIds = data.map(p => p.id);
+          const { data: variantsData, error: variantsError } = await supabase
+            .from('product_variants')
+            .select('id, product_id, name, name_ar, color_code, lip_image_url, in_stock')
+            .in('product_id', productIds);
+
+          if (!variantsError && variantsData) {
+            const variantsMap = new Map<string, ProductVariant[]>();
+            variantsData.forEach(v => {
+              const existing = variantsMap.get(v.product_id) || [];
+              existing.push(v);
+              variantsMap.set(v.product_id, existing);
+            });
+            setVariants(variantsMap);
+          }
+        }
       } catch (error) {
         console.error('Error fetching featured products:', error);
       } finally {
@@ -105,6 +135,7 @@ const FeaturedProducts = () => {
                   badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
                   inStock: product.in_stock ?? true,
                 }}
+                variants={variants.get(product.id) || []}
               />
             ))}
           </div>
