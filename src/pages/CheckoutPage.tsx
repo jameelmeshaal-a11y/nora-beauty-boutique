@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronRight, CreditCard, Truck, MapPin, Phone, User } from "lucide-react";
+import { ChevronRight, CreditCard, Truck, MapPin, Phone, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,14 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { toast } from "sonner";
 import { z } from "zod";
+
+interface CreateOrderResponse {
+  success?: boolean;
+  order_id?: string;
+  total?: number;
+  message?: string;
+  error?: string;
+}
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "الاسم مطلوب"),
@@ -63,36 +71,31 @@ const CheckoutPage = () => {
       
       const shippingAddress = `${formData.address}, ${formData.city}`;
       
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user.id,
-          total: total(),
+      // Prepare cart items for server-side validation (only IDs and quantities)
+      const cartItems = items.map(item => ({
+        product_id: item.product.id,
+        quantity: item.quantity
+      }));
+
+      // Call secure Edge Function for order creation
+      // Server will validate prices and calculate total - never trust client prices
+      const { data, error } = await supabase.functions.invoke<CreateOrderResponse>('create-order', {
+        body: {
+          items: cartItems,
           shipping_address: shippingAddress,
           phone: formData.phone,
-          notes: formData.notes || null,
-          status: 'pending'
-        })
-        .select()
-        .single();
-      
-      if (orderError) throw orderError;
-      
-      // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        quantity: item.quantity,
-        price: item.product.price,
-        product_name: item.product.name
-      }));
-      
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-      
-      if (itemsError) throw itemsError;
+          notes: formData.notes || null
+        }
+      });
+
+      if (error) {
+        console.error('Order creation error:', error);
+        throw new Error(error.message || 'Failed to create order');
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to create order');
+      }
       
       clearCart();
       toast.success("تم إرسال طلبك بنجاح! سنتواصل معك قريباً");
