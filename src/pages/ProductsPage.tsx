@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import MegaMenu from "@/components/navigation/MegaMenu";
-import ProductCardKylie from "@/components/product/ProductCardKylie";
+import ProductCard from "@/components/product/ProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -188,7 +188,23 @@ const ProductsPage = () => {
           ) : products.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {products.map((product) => (
-                <ProductCardKylie key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    id: product.id,
+                    name: product.name_ar || product.name,
+                    nameEn: product.name,
+                    brand: product.brand || '',
+                    price: product.price,
+                    originalPrice: product.original_price || undefined,
+                    image: product.image_url || '/placeholder.svg',
+                    rating: product.rating || 4.5,
+                    reviews: product.reviews_count || 0,
+                    shades: product.shades_count || 1,
+                    badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
+                    inStock: product.in_stock ?? true,
+                  }}
+                />
               ))}
             </div>
           ) : (

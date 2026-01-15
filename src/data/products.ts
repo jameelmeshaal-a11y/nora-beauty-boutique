@@ -10,13 +10,14 @@ export interface Product {
   id: string;
   name: string;
   nameEn: string;
+  brand?: string;
   category?: string;
   price: number;
   originalPrice?: number;
   image: string;
   shades: number;
   badge?: "bestseller" | "new" | "sale";
-  description: string;
+  description?: string;
   rating: number;
   reviews: number;
   inStock: boolean;

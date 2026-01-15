@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import ProductCardKylie from "@/components/product/ProductCardKylie";
+import ProductCard from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -89,7 +89,23 @@ const FeaturedProducts = () => {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {products.slice(0, 8).map((product) => (
-              <ProductCardKylie key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={{
+                  id: product.id,
+                  name: product.name_ar || product.name,
+                  nameEn: product.name,
+                  brand: product.brand || '',
+                  price: product.price,
+                  originalPrice: product.original_price || undefined,
+                  image: product.image_url || '/placeholder.svg',
+                  rating: product.rating || 4.5,
+                  reviews: product.reviews_count || 0,
+                  shades: product.shades_count || 1,
+                  badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
+                  inStock: product.in_stock ?? true,
+                }}
+              />
             ))}
           </div>
         )}
