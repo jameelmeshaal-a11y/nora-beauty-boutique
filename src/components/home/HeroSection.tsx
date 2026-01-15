@@ -1,9 +1,59 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles } from "lucide-react";
-import heroBanner from "@/assets/hero-banner.jpg";
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import heroLipsMain from "@/assets/hero-lips-main.jpg";
 
 const HeroSection = () => {
+  const { language, t, isRTL } = useLanguage();
+  
+  const content = {
+    ar: {
+      badge: "منتجات تجميل روسية أصلية 100%",
+      title1: "اكتشفي",
+      titleHighlight: "جمالك الطبيعي",
+      title2: "مع نوره للتجميل",
+      subtitle: "مجموعة حصرية من أفخم مستحضرات التجميل الروسية، مصممة خصيصاً لتعزيز جمالك الطبيعي وإبراز أنوثتك الساحرة.",
+      cta: "تسوقي الآن",
+      explore: "استكشفي المجموعات",
+      stats: [
+        { value: "+500", label: "منتج" },
+        { value: "+10K", label: "عميلة سعيدة" },
+        { value: "100%", label: "أصلي" },
+      ]
+    },
+    en: {
+      badge: "100% Authentic Russian Beauty Products",
+      title1: "Discover",
+      titleHighlight: "Your Natural Beauty",
+      title2: "with Noura Beauty",
+      subtitle: "An exclusive collection of the finest Russian cosmetics, specially designed to enhance your natural beauty and highlight your captivating femininity.",
+      cta: "Shop Now",
+      explore: "Explore Collections",
+      stats: [
+        { value: "+500", label: "Products" },
+        { value: "+10K", label: "Happy Customers" },
+        { value: "100%", label: "Authentic" },
+      ]
+    },
+    ru: {
+      badge: "100% Подлинная русская косметика",
+      title1: "Откройте",
+      titleHighlight: "Свою естественную красоту",
+      title2: "с Noura Beauty",
+      subtitle: "Эксклюзивная коллекция лучшей русской косметики, специально созданная для подчёркивания вашей естественной красоты и очарования.",
+      cta: "Купить сейчас",
+      explore: "Смотреть коллекции",
+      stats: [
+        { value: "+500", label: "Товаров" },
+        { value: "+10К", label: "Довольных клиентов" },
+        { value: "100%", label: "Подлинность" },
+      ]
+    }
+  };
+
+  const c = content[language] || content.en;
+
   return (
     <section className="relative min-h-[80vh] overflow-hidden bg-gradient-hero">
       {/* Background pattern */}
@@ -15,54 +65,48 @@ const HeroSection = () => {
       <div className="container relative mx-auto px-4 py-20">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Content */}
-          <div className="order-2 text-center lg:order-1 lg:text-right">
+          <div className={`order-2 text-center ${isRTL ? 'lg:order-1 lg:text-right' : 'lg:order-1 lg:text-left'}`}>
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm text-secondary-foreground">
               <Sparkles className="h-4 w-4" />
-              <span>منتجات تجميل روسية أصلية 100%</span>
+              <span>{c.badge}</span>
             </div>
             
             <h1 className="mb-6 text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl">
-              اكتشفي{" "}
-              <span className="text-gradient-gold">جمالك الطبيعي</span>
+              {c.title1}{" "}
+              <span className="text-gradient-gold">{c.titleHighlight}</span>
               <br />
-              مع نوره للتجميل
+              {c.title2}
             </h1>
             
             <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-              مجموعة حصرية من أفخم مستحضرات التجميل الروسية، 
-              مصممة خصيصاً لتعزيز جمالك الطبيعي وإبراز أنوثتك الساحرة.
+              {c.subtitle}
             </p>
             
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
+            <div className={`flex flex-col gap-4 sm:flex-row sm:justify-center ${isRTL ? 'lg:justify-start' : 'lg:justify-start'}`}>
               <Link to="/products">
                 <Button size="lg" className="gap-2 text-lg shadow-lg">
-                  تسوقي الآن
-                  <ArrowLeft className="h-5 w-5" />
+                  {c.cta}
+                  {isRTL ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />}
                 </Button>
               </Link>
-              <Link to="/categories">
+              <Link to="/products">
                 <Button variant="outline" size="lg" className="text-lg">
-                  استكشفي المجموعات
+                  {c.explore}
                 </Button>
               </Link>
             </div>
             
             {/* Stats */}
-            <div className="mt-12 flex justify-center gap-8 lg:justify-start">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">+500</p>
-                <p className="text-sm text-muted-foreground">منتج</p>
-              </div>
-              <div className="h-12 w-px bg-border" />
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">+10K</p>
-                <p className="text-sm text-muted-foreground">عميلة سعيدة</p>
-              </div>
-              <div className="h-12 w-px bg-border" />
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">100%</p>
-                <p className="text-sm text-muted-foreground">أصلي</p>
-              </div>
+            <div className={`mt-12 flex justify-center gap-8 ${isRTL ? 'lg:justify-start' : 'lg:justify-start'}`}>
+              {c.stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <p className="text-3xl font-bold text-primary">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  {index < c.stats.length - 1 && (
+                    <div className="hidden" />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
           
@@ -71,9 +115,9 @@ const HeroSection = () => {
             <div className="relative">
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-primary/20 to-accent/20 blur-2xl" />
               <img
-                src={heroBanner}
-                alt="Noura Beauty Products"
-                className="relative rounded-3xl shadow-2xl"
+                src={heroLipsMain}
+                alt="Noura Beauty Products - Glossy Lips"
+                className="relative rounded-3xl shadow-2xl object-cover w-full aspect-video"
               />
             </div>
           </div>

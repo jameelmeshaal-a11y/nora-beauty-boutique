@@ -31,6 +31,12 @@ const LanguageSwitcher = () => {
         >
           English
         </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => setLanguage('ru')}
+          className={language === 'ru' ? 'bg-secondary' : ''}
+        >
+          Русский
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -18,7 +18,8 @@ import {
   UserCheck,
   ChevronLeft,
   Save,
-  Loader2
+  Loader2,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import FeaturedProductsManager from "@/components/admin/FeaturedProductsManager";
 
 interface Product {
   id: string;
@@ -276,6 +278,7 @@ const AdminDashboard = () => {
   const sidebarLinks = [
     { id: "overview", icon: LayoutDashboard, label: t('admin.dashboard') },
     { id: "products", icon: Package, label: t('admin.products') },
+    { id: "featured", icon: Star, label: t('admin.featured') },
     { id: "orders", icon: ShoppingCart, label: t('admin.orders') },
     { id: "customers", icon: Users, label: t('admin.customers') },
     { id: "analytics", icon: BarChart3, label: t('admin.analytics') },
@@ -729,6 +732,17 @@ const AdminDashboard = () => {
                   </Table>
                 </CardContent>
               </Card>
+            </div>
+          )}
+          
+          {activeTab === "featured" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">
+                  {language === 'ar' ? 'إدارة المنتجات المميزة' : language === 'ru' ? 'Управление избранными товарами' : 'Featured Products Management'}
+                </h2>
+              </div>
+              <FeaturedProductsManager products={products} onUpdate={fetchProducts} />
             </div>
           )}
           
