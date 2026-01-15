@@ -13,6 +13,72 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCategories } from "@/hooks/useCategories";
 
+// Local assets mapping for fallback images
+import berryPlumLipstickRoses from "@/assets/products/berry-plum-lipstick-roses.jpg";
+import berryPlumLipstick from "@/assets/products/berry-plum-lipstick.jpg";
+import honeyLipOil from "@/assets/products/honey-lip-oil.jpg";
+import kylieGlossBerry from "@/assets/products/kylie-gloss-berry.jpg";
+import kylieGlossNude from "@/assets/products/kylie-gloss-nude.jpg";
+import kylieLipOilRose from "@/assets/products/kylie-lip-oil-rose.jpg";
+import kylieMatteRed from "@/assets/products/kylie-matte-red.jpg";
+import lipGloss1 from "@/assets/products/lip-gloss-1.jpg";
+import lipGloss2 from "@/assets/products/lip-gloss-2.jpg";
+import lipGloss3 from "@/assets/products/lip-gloss-3.jpg";
+import lipOil1 from "@/assets/products/lip-oil-1.jpg";
+import lipstick1 from "@/assets/products/lipstick-1.jpg";
+import lipstick2 from "@/assets/products/lipstick-2.jpg";
+import lipstick3 from "@/assets/products/lipstick-3.jpg";
+import pinkShimmerLipGloss from "@/assets/products/pink-shimmer-lip-gloss.jpg";
+import roseGoldShimmerGloss from "@/assets/products/rose-gold-shimmer-gloss.jpg";
+import highGlossLip from "@/assets/generated/high-gloss-lip.jpg";
+import lipGlossDaddyGirl from "@/assets/generated/lip-gloss-daddy-girl.jpg";
+import lipGlossDamnGina from "@/assets/generated/lip-gloss-damn-gina.jpg";
+import lipGlossRoseBloom from "@/assets/generated/lip-gloss-rose-bloom.jpg";
+import lipOilHoney from "@/assets/generated/lip-oil-honey.jpg";
+import matteLipKitDolce from "@/assets/generated/matte-lip-kit-dolce.jpg";
+import plumpingLipGloss from "@/assets/generated/plumping-lip-gloss.jpg";
+import velvetMatteLipstick from "@/assets/generated/velvet-matte-lipstick.jpg";
+
+// Map of local asset paths to imported modules
+const localAssets: Record<string, string> = {
+  "/src/assets/products/berry-plum-lipstick-roses.jpg": berryPlumLipstickRoses,
+  "/src/assets/products/berry-plum-lipstick.jpg": berryPlumLipstick,
+  "/src/assets/products/honey-lip-oil.jpg": honeyLipOil,
+  "/src/assets/products/kylie-gloss-berry.jpg": kylieGlossBerry,
+  "/src/assets/products/kylie-gloss-nude.jpg": kylieGlossNude,
+  "/src/assets/products/kylie-lip-oil-rose.jpg": kylieLipOilRose,
+  "/src/assets/products/kylie-matte-red.jpg": kylieMatteRed,
+  "/src/assets/products/lip-gloss-1.jpg": lipGloss1,
+  "/src/assets/products/lip-gloss-2.jpg": lipGloss2,
+  "/src/assets/products/lip-gloss-3.jpg": lipGloss3,
+  "/src/assets/products/lip-oil-1.jpg": lipOil1,
+  "/src/assets/products/lipstick-1.jpg": lipstick1,
+  "/src/assets/products/lipstick-2.jpg": lipstick2,
+  "/src/assets/products/lipstick-3.jpg": lipstick3,
+  "/src/assets/products/pink-shimmer-lip-gloss.jpg": pinkShimmerLipGloss,
+  "/src/assets/products/rose-gold-shimmer-gloss.jpg": roseGoldShimmerGloss,
+  "/src/assets/generated/high-gloss-lip.jpg": highGlossLip,
+  "/src/assets/generated/lip-gloss-daddy-girl.jpg": lipGlossDaddyGirl,
+  "/src/assets/generated/lip-gloss-damn-gina.jpg": lipGlossDamnGina,
+  "/src/assets/generated/lip-gloss-rose-bloom.jpg": lipGlossRoseBloom,
+  "/src/assets/generated/lip-oil-honey.jpg": lipOilHoney,
+  "/src/assets/generated/matte-lip-kit-dolce.jpg": matteLipKitDolce,
+  "/src/assets/generated/plumping-lip-gloss.jpg": plumpingLipGloss,
+  "/src/assets/generated/velvet-matte-lipstick.jpg": velvetMatteLipstick,
+};
+
+// Helper to get the correct image URL
+const getImageUrl = (imageUrl: string | null): string => {
+  if (!imageUrl) return '/placeholder.svg';
+  
+  // Check if it's a local asset path
+  if (localAssets[imageUrl]) {
+    return localAssets[imageUrl];
+  }
+  
+  // Return the URL as-is for external URLs
+  return imageUrl;
+};
 interface Product {
   id: string;
   name: string;
@@ -239,7 +305,7 @@ const ProductsPage = () => {
                       brand: product.brand || '',
                       price: product.price,
                       originalPrice: product.original_price || undefined,
-                      image: product.image_url || '/placeholder.svg',
+                      image: getImageUrl(product.image_url),
                       rating: product.rating || 4.5,
                       reviews: product.reviews_count || 0,
                       shades: product.shades_count || 1,
