@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -9,15 +10,44 @@ import { Heart, ShoppingBag, Star, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
-interface ProductCardProps {
-  product: Product;
+interface ProductVariant {
+  id: string;
+  name: string;
+  name_ar?: string | null;
+  color_code: string;
+  lip_image_url?: string | null;
+  image_url?: string | null;
+  in_stock?: boolean;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+interface ProductCardProps {
+  product: Product;
+  variants?: ProductVariant[];
+}
+
+const ProductCard = ({ product, variants = [] }: ProductCardProps) => {
   const { addItem } = useCartStore();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { t, language } = useLanguage();
   const { settings } = useStoreSettings();
+  
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    variants.length > 0 ? variants[0].id : null
+  );
+
+  const selectedVariant = variants.find(v => v.id === selectedVariantId);
+  
+  // Determine current image based on selected variant
+  const getCurrentImage = () => {
+    if (selectedVariant) {
+      // Prefer lip_image_url for lip products, then variant image_url, then product image
+      if (selectedVariant.lip_image_url) return selectedVariant.lip_image_url;
+      if (selectedVariant.image_url) return selectedVariant.image_url;
+    }
+    return product.image || '/placeholder.svg';
+  };
+
+  const currentImage = getCurrentImage();
 
   const getBadgeVariant = (badge?: string) => {
     switch (badge) {
@@ -57,6 +87,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
     addItem(product);
   };
 
+  const handleColorSelect = (variantId: string) => {
+    const variant = variants.find(v => v.id === variantId);
+    if (variant && variant.in_stock !== false) {
+      setSelectedVariantId(variantId);
+    }
+  };
+
   const isFav = isFavorite(product.id);
 
   // Stock status
@@ -73,9 +110,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <Link to={`/product/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-secondary/20">
           <img
-            src={product.image}
+            src={currentImage}
             alt={language === 'ar' ? product.name : product.nameEn}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/placeholder.svg';
+            }}
           />
           
           {/* Badges */}
@@ -101,11 +142,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
           
           {/* Shades count */}
-          <div className="absolute left-3 top-3">
-            <span className="rounded-full bg-background/80 px-2 py-1 text-xs font-medium text-foreground backdrop-blur-sm">
-              +{product.shades} {t('product.shades')}
-            </span>
-          </div>
+          {product.shades > 1 && variants.length === 0 && (
+            <div className="absolute left-3 top-3">
+              <span className="rounded-full bg-background/80 px-2 py-1 text-xs font-medium text-foreground backdrop-blur-sm">
+                +{product.shades} {t('product.shades')}
+              </span>
+            </div>
+          )}
           
           {/* Quick actions overlay */}
           <div className="absolute inset-0 flex items-center justify-center gap-3 bg-foreground/20 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
@@ -147,6 +190,34 @@ const ProductCard = ({ product }: ProductCardProps) => {
       
       {/* Content */}
       <div className="p-4">
+        {/* Color Swatches */}
+        {variants.length > 0 && (
+          <div className="mb-3 flex flex-wrap items-center gap-1.5">
+            {variants.slice(0, 6).map((variant) => (
+              <button
+                key={variant.id}
+                onClick={() => handleColorSelect(variant.id)}
+                disabled={variant.in_stock === false}
+                className={cn(
+                  "h-5 w-5 rounded-full border-2 transition-all duration-200",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
+                  selectedVariantId === variant.id
+                    ? "border-primary ring-1 ring-primary"
+                    : "border-border hover:border-primary/50",
+                  variant.in_stock === false && "opacity-40 cursor-not-allowed"
+                )}
+                style={{ backgroundColor: variant.color_code }}
+                title={language === 'ar' ? variant.name_ar || variant.name : variant.name}
+              />
+            ))}
+            {variants.length > 6 && (
+              <span className="text-xs text-muted-foreground">
+                +{variants.length - 6}
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Rating */}
         <div className="mb-2 flex items-center gap-1">
           <Star className="h-4 w-4 fill-accent text-accent" />
@@ -163,6 +234,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <p className="mb-2 text-xs text-muted-foreground line-clamp-1">
           {language === 'ar' ? product.nameEn : product.name}
         </p>
+
+        {/* Selected color name */}
+        {selectedVariant && (
+          <p className="mb-2 text-xs text-primary">
+            {language === 'ar' ? selectedVariant.name_ar || selectedVariant.name : selectedVariant.name}
+          </p>
+        )}
 
         {/* Supplier Name - if enabled in settings */}
         {settings?.show_supplier_name && product.supplierName && (

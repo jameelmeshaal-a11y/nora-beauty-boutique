@@ -13,7 +13,6 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
-import MegaMenu from "@/components/navigation/MegaMenu";
 import ColorSwatch from "@/components/product/ColorSwatch";
 import StockBadge from "@/components/product/StockBadge";
 import { toast } from "sonner";
@@ -147,7 +146,6 @@ const ProductDetailsPage = () => {
     return (
       <div className="min-h-screen bg-background" dir={isRTL ? "rtl" : "ltr"}>
         <Navbar />
-        <MegaMenu />
         <div className="container mx-auto flex min-h-[60vh] items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
@@ -160,7 +158,6 @@ const ProductDetailsPage = () => {
     return (
       <div className="min-h-screen bg-background" dir={isRTL ? "rtl" : "ltr"}>
         <Navbar />
-        <MegaMenu />
         <div className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4">
           <h1 className="text-2xl font-bold text-foreground">
             {language === 'ar' ? 'المنتج غير موجود' : 'Product not found'}
@@ -193,7 +190,6 @@ const ProductDetailsPage = () => {
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? "rtl" : "ltr"}>
       <Navbar />
-      <MegaMenu />
       
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}

@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Heart, Search, Menu, X, User, LogOut, Store, UserCircle } from "lucide-react";
+import { ShoppingBag, Heart, Search, Menu, X, User, LogOut, Store, UserCircle, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSupplier } from "@/hooks/useSupplier";
+import { useCategories } from "@/hooks/useCategories";
 import { Button } from "@/components/ui/button";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { cn } from "@/lib/utils";
@@ -19,31 +20,24 @@ import {
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { toggleCart, itemCount } = useCartStore();
   const { user, isAdmin, signOut } = useAuth();
   const { favoritesCount } = useFavorites();
   const { isSupplier, supplier } = useSupplier();
   const { t, language, isRTL } = useLanguage();
   const location = useLocation();
-  
-  const mainCategories = [
-    { href: "/category?category=cosmetics", label: language === 'ar' ? 'مستحضرات التجميل' : 'Cosmetics' },
-    { href: "/category?category=fragrance", label: language === 'ar' ? 'العطور' : 'Fragrance' },
-    { href: "/category?category=skin", label: language === 'ar' ? 'العناية بالبشرة' : 'Skincare' },
-    { href: "/category?category=hair", label: language === 'ar' ? 'العناية بالشعر' : 'Hair Care' },
-    { href: "/category?category=discover", label: language === 'ar' ? 'اكتشف' : 'Discover' },
-  ];
-  
-  const navLinks = [
-    { href: "/", label: t('nav.home') },
-    { href: "/products", label: t('nav.products') },
-    ...mainCategories,
-    { href: "/about", label: t('nav.about') },
-  ];
+  const { categoriesTree } = useCategories();
 
   const handleSignOut = async () => {
     await signOut();
   };
+
+  // Static nav links
+  const staticLinks = [
+    { href: "/", label: t('nav.home') },
+    { href: "/products", label: t('nav.products') },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -79,13 +73,14 @@ const Navbar = () => {
           </Link>
           
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:items-center lg:gap-8">
-            {navLinks.map((link) => (
+          <div className="hidden lg:flex lg:items-center lg:gap-1">
+            {/* Static links */}
+            {staticLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "px-3 py-2 text-sm font-medium transition-colors hover:text-primary rounded-md",
                   location.pathname === link.href
                     ? "text-primary"
                     : "text-foreground"
@@ -94,6 +89,96 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+
+            {/* Category dropdowns */}
+            {categoriesTree.map((category) => (
+              <div
+                key={category.id}
+                className="relative"
+                onMouseEnter={() => setActiveCategory(category.id)}
+                onMouseLeave={() => setActiveCategory(null)}
+              >
+                <Link
+                  to={`/category?category=${category.slug}`}
+                  className={cn(
+                    "flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:text-primary rounded-md",
+                    activeCategory === category.id ? "text-primary" : "text-foreground"
+                  )}
+                >
+                  {language === 'ar' ? category.name_ar || category.name : category.name}
+                  {category.children && category.children.length > 0 && (
+                    <ChevronDown className={cn(
+                      "h-4 w-4 transition-transform duration-200",
+                      activeCategory === category.id && "rotate-180"
+                    )} />
+                  )}
+                </Link>
+
+                {/* Mega Dropdown */}
+                {category.children && category.children.length > 0 && activeCategory === category.id && (
+                  <div
+                    className={cn(
+                      "absolute top-full bg-background border border-border rounded-lg shadow-lg z-50",
+                      "min-w-[400px] max-w-[700px]",
+                      isRTL ? "right-0" : "left-0"
+                    )}
+                  >
+                    <div className="grid grid-cols-2 gap-4 p-5">
+                      {category.children.map((subCategory) => (
+                        <div key={subCategory.id} className="space-y-2">
+                          <Link
+                            to={`/category?category=${subCategory.slug}`}
+                            className="font-semibold text-foreground hover:text-primary transition-colors block"
+                          >
+                            {language === 'ar' ? subCategory.name_ar || subCategory.name : subCategory.name}
+                          </Link>
+                          
+                          {subCategory.children && subCategory.children.length > 0 && (
+                            <ul className="space-y-1">
+                              {subCategory.children.slice(0, 5).map((child) => (
+                                <li key={child.id}>
+                                  <Link
+                                    to={`/category?category=${child.slug}`}
+                                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                                  >
+                                    {language === 'ar' ? child.name_ar || child.name : child.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* View All link */}
+                    <div className="border-t border-border p-3 bg-secondary/30 rounded-b-lg">
+                      <Link
+                        to={`/category?category=${category.slug}`}
+                        className="text-sm font-medium text-primary hover:underline"
+                      >
+                        {language === 'ar' 
+                          ? `عرض جميع ${category.name_ar || category.name}` 
+                          : `View All ${category.name}`}
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* About link at the end */}
+            <Link
+              to="/about"
+              className={cn(
+                "px-3 py-2 text-sm font-medium transition-colors hover:text-primary rounded-md",
+                location.pathname === "/about"
+                  ? "text-primary"
+                  : "text-foreground"
+              )}
+            >
+              {t('nav.about')}
+            </Link>
           </div>
           
           {/* Right side icons */}
@@ -195,13 +280,13 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="border-t border-border py-4 lg:hidden">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
+            <div className="flex flex-col gap-2">
+              {staticLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
+                    "text-sm font-medium transition-colors hover:text-primary py-2",
                     location.pathname === link.href
                       ? "text-primary"
                       : "text-foreground"
@@ -211,11 +296,33 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
+              
+              {/* Mobile categories */}
+              {categoriesTree.map((category) => (
+                <div key={category.id} className="py-2">
+                  <Link
+                    to={`/category?category=${category.slug}`}
+                    className="text-sm font-medium text-foreground hover:text-primary"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {language === 'ar' ? category.name_ar || category.name : category.name}
+                  </Link>
+                </div>
+              ))}
+
+              <Link
+                to="/about"
+                className="text-sm font-medium text-foreground hover:text-primary py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t('nav.about')}
+              </Link>
+
               {user ? (
                 <>
                   <Link
                     to="/orders"
-                    className="text-sm font-medium text-foreground hover:text-primary"
+                    className="text-sm font-medium text-foreground hover:text-primary py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t('nav.orders')}
@@ -223,7 +330,7 @@ const Navbar = () => {
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="text-sm font-medium text-foreground hover:text-primary"
+                      className="text-sm font-medium text-foreground hover:text-primary py-2"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {t('admin.dashboard')}
@@ -234,7 +341,7 @@ const Navbar = () => {
                       handleSignOut();
                       setIsMenuOpen(false);
                     }}
-                    className="text-sm font-medium text-destructive hover:text-destructive/80 text-start"
+                    className="text-sm font-medium text-destructive hover:text-destructive/80 text-start py-2"
                   >
                     {t('nav.logout')}
                   </button>
@@ -242,7 +349,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to="/auth"
-                  className="text-sm font-medium text-foreground hover:text-primary"
+                  className="text-sm font-medium text-foreground hover:text-primary py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.login')}
