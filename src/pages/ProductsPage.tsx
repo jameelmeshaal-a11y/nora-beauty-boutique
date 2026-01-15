@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCategories } from "@/hooks/useCategories";
@@ -34,6 +34,8 @@ interface Product {
   has_free_sample: boolean | null;
 }
 
+const PRODUCTS_PER_PAGE = 12;
+
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category") || "all";
@@ -45,11 +47,13 @@ const ProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
 
   // Fetch products from database
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
+      setVisibleCount(PRODUCTS_PER_PAGE);
       try {
         let query = supabase
           .from('products')
@@ -81,7 +85,7 @@ const ProductsPage = () => {
             query = query.order('is_bestseller', { ascending: false }).order('created_at', { ascending: false });
         }
 
-        const { data, error } = await query.limit(50);
+        const { data, error } = await query.limit(200);
         
         if (error) throw error;
         setProducts(data || []);
@@ -101,9 +105,16 @@ const ProductsPage = () => {
     { id: "lipstick", name: "أحمر الشفاه", nameEn: "Lipstick" },
     { id: "lip-gloss", name: "ملمع الشفاه", nameEn: "Lip Gloss" },
     { id: "lip-oil", name: "زيت الشفاه", nameEn: "Lip Oil" },
-    { id: "hair-oils", name: "زيوت الشعر", nameEn: "Hair Oils" },
-    { id: "shampoos", name: "شامبوهات", nameEn: "Shampoos" },
+    { id: "skincare", name: "العناية بالبشرة", nameEn: "Skincare" },
+    { id: "hair", name: "الشعر", nameEn: "Hair" },
   ];
+
+  const visibleProducts = products.slice(0, visibleCount);
+  const hasMore = visibleCount < products.length;
+
+  const handleShowMore = () => {
+    setVisibleCount(prev => Math.min(prev + PRODUCTS_PER_PAGE, products.length));
+  };
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
@@ -171,7 +182,9 @@ const ProductsPage = () => {
           
           {/* Products count */}
           <p className="mb-6 text-sm text-muted-foreground">
-            {products.length} {language === 'ar' ? 'منتج' : 'products'}
+            {language === 'ar' 
+              ? `عرض ${visibleProducts.length} من ${products.length} منتج`
+              : `Showing ${visibleProducts.length} of ${products.length} products`}
           </p>
           
           {/* Products grid */}
@@ -185,28 +198,48 @@ const ProductsPage = () => {
                 </div>
               ))}
             </div>
-          ) : products.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={{
-                    id: product.id,
-                    name: product.name_ar || product.name,
-                    nameEn: product.name,
-                    brand: product.brand || '',
-                    price: product.price,
-                    originalPrice: product.original_price || undefined,
-                    image: product.image_url || '/placeholder.svg',
-                    rating: product.rating || 4.5,
-                    reviews: product.reviews_count || 0,
-                    shades: product.shades_count || 1,
-                    badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
-                    inStock: product.in_stock ?? true,
-                  }}
-                />
-              ))}
-            </div>
+          ) : visibleProducts.length > 0 ? (
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {visibleProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      name: product.name_ar || product.name,
+                      nameEn: product.name,
+                      brand: product.brand || '',
+                      price: product.price,
+                      originalPrice: product.original_price || undefined,
+                      image: product.image_url || '/placeholder.svg',
+                      rating: product.rating || 4.5,
+                      reviews: product.reviews_count || 0,
+                      shades: product.shades_count || 1,
+                      badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
+                      inStock: product.in_stock ?? true,
+                    }}
+                  />
+                ))}
+              </div>
+              
+              {/* Show More Button */}
+              {hasMore && (
+                <div className="mt-10 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handleShowMore}
+                    className="gap-2 px-8"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                    {language === 'ar' ? 'إظهار المزيد' : 'Show More'}
+                    <span className="text-muted-foreground">
+                      ({products.length - visibleCount} {language === 'ar' ? 'متبقي' : 'remaining'})
+                    </span>
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="py-20 text-center">
               <p className="text-lg text-muted-foreground">
