@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import heroLipsMain from "@/assets/hero-lips-main.jpg";
+import heroLipsticks from "@/assets/hero-lipsticks.png";
 
 const HeroSection = () => {
   const { language, t, isRTL } = useLanguage();
@@ -115,9 +115,9 @@ const HeroSection = () => {
             <div className="relative">
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-primary/20 to-accent/20 blur-2xl" />
               <img
-                src={heroLipsMain}
-                alt="Noura Beauty Products - Glossy Lips"
-                className="relative rounded-3xl shadow-2xl object-cover w-full aspect-video"
+                src={heroLipsticks}
+                alt="Noura Beauty Products - Lipsticks Collection"
+                className="relative rounded-3xl shadow-2xl object-cover w-full"
               />
             </div>
           </div>
