@@ -1,7 +1,9 @@
 import { useCartStore } from "@/store/cartStore";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Minus, ShoppingBag } from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, Gift } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const CartDrawer = () => {
   const { items, isOpen, toggleCart, removeItem, updateQuantity, total, clearCart } = useCartStore();
@@ -49,7 +51,10 @@ const CartDrawer = () => {
                 {items.map((item) => (
                   <div
                     key={item.product.id}
-                    className="flex gap-4 rounded-lg bg-secondary/30 p-3"
+                    className={cn(
+                      "flex gap-4 rounded-lg p-3",
+                      item.isSample ? "bg-accent/10 border border-accent/30" : "bg-secondary/30"
+                    )}
                   >
                     <img
                       src={item.product.image}
@@ -57,29 +62,48 @@ const CartDrawer = () => {
                       className="h-20 w-20 rounded-lg object-cover"
                     />
                     <div className="flex flex-1 flex-col">
-                      <h3 className="font-medium text-foreground line-clamp-1">{item.product.name}</h3>
-                      <p className="text-sm text-primary">{item.product.price} ر.س</p>
+                      <div className="flex items-start gap-2">
+                        <h3 className="font-medium text-foreground line-clamp-1 flex-1">
+                          {item.product.name}
+                        </h3>
+                        {item.isSample && (
+                          <Badge className="bg-accent text-accent-foreground text-[10px] flex items-center gap-1">
+                            <Gift className="h-3 w-3" />
+                            مجاني
+                          </Badge>
+                        )}
+                      </div>
+                      <p className={cn(
+                        "text-sm",
+                        item.isSample ? "text-accent font-medium" : "text-primary"
+                      )}>
+                        {item.isSample ? "مجاني" : `${item.product.price} ر.س`}
+                      </p>
                       
                       <div className="mt-auto flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-8 text-center font-medium">{item.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        {!item.isSample ? (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">عينة مجانية مع طلبك</span>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -103,9 +127,11 @@ const CartDrawer = () => {
                 <span className="text-muted-foreground">المجموع</span>
                 <span className="text-xl font-bold text-primary">{total()} ر.س</span>
               </div>
-              <Button className="w-full" size="lg">
-                إتمام الشراء
-              </Button>
+              <Link to="/checkout" onClick={toggleCart}>
+                <Button className="w-full" size="lg">
+                  إتمام الشراء
+                </Button>
+              </Link>
               <Button
                 variant="ghost"
                 className="mt-2 w-full text-muted-foreground"

@@ -312,6 +312,7 @@ export type Database = {
           created_at: string
           description: string | null
           description_ar: string | null
+          has_free_sample: boolean | null
           id: string
           image_url: string | null
           images: string[] | null
@@ -327,6 +328,8 @@ export type Database = {
           price: number
           rating: number | null
           reviews_count: number | null
+          sample_description: string | null
+          sample_description_ar: string | null
           shades_count: number | null
           stock_quantity: number | null
           supplier_id: string | null
@@ -339,6 +342,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_ar?: string | null
+          has_free_sample?: boolean | null
           id?: string
           image_url?: string | null
           images?: string[] | null
@@ -354,6 +358,8 @@ export type Database = {
           price: number
           rating?: number | null
           reviews_count?: number | null
+          sample_description?: string | null
+          sample_description_ar?: string | null
           shades_count?: number | null
           stock_quantity?: number | null
           supplier_id?: string | null
@@ -366,6 +372,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_ar?: string | null
+          has_free_sample?: boolean | null
           id?: string
           image_url?: string | null
           images?: string[] | null
@@ -381,6 +388,8 @@ export type Database = {
           price?: number
           rating?: number | null
           reviews_count?: number | null
+          sample_description?: string | null
+          sample_description_ar?: string | null
           shades_count?: number | null
           stock_quantity?: number | null
           supplier_id?: string | null
