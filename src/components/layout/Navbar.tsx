@@ -1,10 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Heart, Search, Menu, X, User, LogOut } from "lucide-react";
+import { ShoppingBag, Heart, Search, Menu, X, User, LogOut, Store, UserCircle } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSupplier } from "@/hooks/useSupplier";
 import { Button } from "@/components/ui/button";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ const Navbar = () => {
   const { toggleCart, itemCount } = useCartStore();
   const { user, isAdmin, signOut } = useAuth();
   const { favoritesCount } = useFavorites();
+  const { isSupplier, supplier } = useSupplier();
   const { t, language, isRTL } = useLanguage();
   const location = useLocation();
   
@@ -115,14 +117,37 @@ const Navbar = () => {
                 {user ? (
                   <>
                     <DropdownMenuItem asChild>
+                      <Link to="/account" className="w-full flex items-center gap-2">
+                        <UserCircle className="h-4 w-4" />
+                        {language === 'ar' ? 'حسابي' : 'My Account'}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link to="/orders" className="w-full">
                         {t('nav.orders')}
                       </Link>
                     </DropdownMenuItem>
+                    {isSupplier && supplier?.is_active && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/supplier" className="w-full flex items-center gap-2">
+                          <Store className="h-4 w-4" />
+                          {language === 'ar' ? 'لوحة المورد' : 'Supplier Panel'}
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     {isAdmin && (
                       <DropdownMenuItem asChild>
                         <Link to="/admin" className="w-full">
                           {t('admin.dashboard')}
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    {!isSupplier && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/supplier/register" className="w-full flex items-center gap-2 text-primary">
+                          <Store className="h-4 w-4" />
+                          {language === 'ar' ? 'انضم كمورد' : 'Become a Supplier'}
                         </Link>
                       </DropdownMenuItem>
                     )}

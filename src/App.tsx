@@ -16,6 +16,11 @@ import OrdersPage from "./pages/OrdersPage";
 import AboutPage from "./pages/AboutPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import NotFound from "./pages/NotFound";
+import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import SupplierRegister from "./pages/supplier/SupplierRegister";
+import SupplierDashboard from "./pages/supplier/SupplierDashboard";
+import SupplierProductForm from "./pages/supplier/SupplierProductForm";
+import CategoryPage from "./pages/CategoryPage";
 
 const queryClient = new QueryClient();
 
@@ -28,16 +33,24 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Routes>
+            <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products" element={<CategoryPage />} />
                 <Route path="/product/:id" element={<ProductDetailsPage />} />
-                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/*" element={<AdminDashboard />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/favorites" element={<FavoritesPage />} />
+                {/* Customer Dashboard */}
+                <Route path="/account" element={<CustomerDashboard />} />
+                <Route path="/account/*" element={<CustomerDashboard />} />
+                {/* Supplier Routes */}
+                <Route path="/supplier/register" element={<SupplierRegister />} />
+                <Route path="/supplier" element={<SupplierDashboard />} />
+                <Route path="/supplier/products/new" element={<SupplierProductForm />} />
+                <Route path="/supplier/products/:id/edit" element={<SupplierProductForm />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
