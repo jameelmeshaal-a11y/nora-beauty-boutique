@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
+  const { t, language } = useLanguage();
+  
   return (
     <footer className="border-t border-border bg-secondary/30">
       <div className="container mx-auto px-4 py-12">

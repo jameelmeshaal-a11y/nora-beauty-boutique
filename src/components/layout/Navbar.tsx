@@ -1,27 +1,48 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Heart, Search, Menu, X, User } from "lucide-react";
+import { ShoppingBag, Heart, Search, Menu, X, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/store/cartStore";
+import { useAuth } from "@/hooks/useAuth";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { toggleCart, itemCount } = useCartStore();
+  const { user, isAdmin, signOut } = useAuth();
+  const { favoritesCount } = useFavorites();
+  const { t, language, isRTL } = useLanguage();
   const location = useLocation();
   
   const navLinks = [
-    { href: "/", label: "الرئيسية" },
-    { href: "/products", label: "المنتجات" },
-    { href: "/categories", label: "التصنيفات" },
-    { href: "/about", label: "من نحن" },
+    { href: "/", label: t('nav.home') },
+    { href: "/products", label: t('nav.products') },
+    { href: "/about", label: t('nav.about') },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* Top announcement bar */}
       <div className="bg-primary py-2 text-center text-sm text-primary-foreground">
-        <p>🎁 شحن مجاني للطلبات فوق 200 ر.س | منتجات تجميل روسية أصلية</p>
+        <p>
+          {language === 'ar' 
+            ? '🎁 شحن مجاني للطلبات فوق 200 ر.س | منتجات تجميل روسية أصلية'
+            : '🎁 Free shipping on orders over 200 SAR | Authentic Russian cosmetics'}
+        </p>
       </div>
       
       <nav className="container mx-auto px-4">
@@ -38,8 +59,12 @@ const Navbar = () => {
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-primary">نوره</span>
-            <span className="hidden text-sm text-muted-foreground sm:block">NOURA BEAUTY</span>
+            <span className="text-3xl font-bold text-primary">
+              {language === 'ar' ? 'نوره' : 'NOURA'}
+            </span>
+            <span className="hidden text-sm text-muted-foreground sm:block">
+              {language === 'ar' ? 'NOURA BEAUTY' : 'BEAUTY'}
+            </span>
           </Link>
           
           {/* Desktop Navigation */}
@@ -61,18 +86,62 @@ const Navbar = () => {
           </div>
           
           {/* Right side icons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <LanguageSwitcher />
+            
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <Heart className="h-5 w-5" />
-            </Button>
-            <Link to="/admin">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
+            
+            <Link to="/favorites">
+              <Button variant="ghost" size="icon" className="relative">
+                <Heart className="h-5 w-5" />
+                {favoritesCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-xs text-accent-foreground">
+                    {favoritesCount}
+                  </span>
+                )}
               </Button>
             </Link>
+            
+            {/* User Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align={isRTL ? "start" : "end"}>
+                {user ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/orders" className="w-full">
+                        {t('nav.orders')}
+                      </Link>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="w-full">
+                          {t('admin.dashboard')}
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                      <LogOut className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                      {t('nav.logout')}
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link to="/auth" className="w-full">
+                      {t('nav.login')}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Button
               variant="ghost"
               size="icon"
@@ -108,6 +177,43 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
+              {user ? (
+                <>
+                  <Link
+                    to="/orders"
+                    className="text-sm font-medium text-foreground hover:text-primary"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {t('nav.orders')}
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="text-sm font-medium text-foreground hover:text-primary"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {t('admin.dashboard')}
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-sm font-medium text-destructive hover:text-destructive/80 text-start"
+                  >
+                    {t('nav.logout')}
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  className="text-sm font-medium text-foreground hover:text-primary"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t('nav.login')}
+                </Link>
+              )}
             </div>
           </div>
         )}
