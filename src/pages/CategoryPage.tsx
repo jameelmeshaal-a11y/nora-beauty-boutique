@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { ChevronRight, Filter, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight, Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -20,6 +20,8 @@ import CartDrawer from '@/components/cart/CartDrawer';
 import MegaMenu from '@/components/navigation/MegaMenu';
 import { Skeleton } from '@/components/ui/skeleton';
 
+const PRODUCTS_PER_PAGE = 12;
+
 const CategoryPage = () => {
   const [searchParams] = useSearchParams();
   const categorySlug = searchParams.get('category');
@@ -30,6 +32,7 @@ const CategoryPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState('newest');
   const [currentCategory, setCurrentCategory] = useState<Category | undefined>();
+  const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
 
   useEffect(() => {
     if (categorySlug) {
@@ -42,6 +45,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     fetchProducts();
+    setVisibleCount(PRODUCTS_PER_PAGE);
   }, [categorySlug, sortBy]);
 
   const fetchProducts = async () => {
@@ -83,7 +87,7 @@ const CategoryPage = () => {
           query = query.order('created_at', { ascending: false });
       }
 
-      const { data, error } = await query.limit(50);
+      const { data, error } = await query.limit(200);
 
       if (error) throw error;
       setProducts(data || []);
@@ -114,6 +118,13 @@ const CategoryPage = () => {
     ? getChildCategories(currentCategory.id)
     : [];
 
+  const visibleProducts = products.slice(0, visibleCount);
+  const hasMore = visibleCount < products.length;
+
+  const handleShowMore = () => {
+    setVisibleCount(prev => Math.min(prev + PRODUCTS_PER_PAGE, products.length));
+  };
+
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       <Navbar />
@@ -133,7 +144,7 @@ const CategoryPage = () => {
             <span key={crumb.id} className="flex items-center gap-2">
               <ChevronRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
               <Link 
-                to={`/products?category=${crumb.slug}`}
+                to={`/category?category=${crumb.slug}`}
                 className={crumb.id === currentCategory?.id ? 'text-foreground' : 'hover:text-primary'}
               >
                 {language === 'ar' ? crumb.name_ar || crumb.name : crumb.name}
@@ -151,7 +162,9 @@ const CategoryPage = () => {
             }
           </h1>
           <p className="mt-2 text-muted-foreground">
-            {products.length} {language === 'ar' ? 'منتج' : 'products'}
+            {language === 'ar' 
+              ? `عرض ${visibleProducts.length} من ${products.length} منتج`
+              : `Showing ${visibleProducts.length} of ${products.length} products`}
           </p>
         </div>
 
@@ -159,7 +172,7 @@ const CategoryPage = () => {
         {subCategories.length > 0 && (
           <div className="mb-8 flex flex-wrap gap-2">
             {subCategories.map((subCat) => (
-              <Link key={subCat.id} to={`/products?category=${subCat.slug}`}>
+              <Link key={subCat.id} to={`/category?category=${subCat.slug}`}>
                 <Badge variant="outline" className="cursor-pointer px-4 py-2 hover:bg-secondary">
                   {language === 'ar' ? subCat.name_ar || subCat.name : subCat.name}
                 </Badge>
@@ -223,27 +236,47 @@ const CategoryPage = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={{
-                  id: product.id,
-                  name: product.name_ar || product.name,
-                  nameEn: product.name,
-                  brand: product.brand || '',
-                  price: product.price,
-                  originalPrice: product.original_price || undefined,
-                  image: product.image_url || '/placeholder.svg',
-                  rating: product.rating || 4.5,
-                  reviews: product.reviews_count || 0,
-                  shades: product.shades_count || 1,
-                  badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
-                  inStock: product.in_stock ?? true,
-                }}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {visibleProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    id: product.id,
+                    name: product.name_ar || product.name,
+                    nameEn: product.name,
+                    brand: product.brand || '',
+                    price: product.price,
+                    originalPrice: product.original_price || undefined,
+                    image: product.image_url || '/placeholder.svg',
+                    rating: product.rating || 4.5,
+                    reviews: product.reviews_count || 0,
+                    shades: product.shades_count || 1,
+                    badge: product.is_bestseller ? 'bestseller' : product.is_new ? 'new' : undefined,
+                    inStock: product.in_stock ?? true,
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Show More Button */}
+            {hasMore && (
+              <div className="mt-10 flex justify-center">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleShowMore}
+                  className="gap-2 px-8"
+                >
+                  <ChevronDown className="h-5 w-5" />
+                  {language === 'ar' ? 'إظهار المزيد' : 'Show More'}
+                  <span className="text-muted-foreground">
+                    ({products.length - visibleCount} {language === 'ar' ? 'متبقي' : 'remaining'})
+                  </span>
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </main>
 
