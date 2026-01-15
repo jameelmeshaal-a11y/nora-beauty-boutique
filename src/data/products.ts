@@ -20,6 +20,10 @@ export interface Product {
   rating: number;
   reviews: number;
   inStock: boolean;
+  stockQuantity?: number;
+  lowStockThreshold?: number;
+  supplierName?: string;
+  supplierNameAr?: string;
 }
 
 export const products: Product[] = [

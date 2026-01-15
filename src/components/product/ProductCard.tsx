@@ -2,9 +2,10 @@ import { Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { Heart, ShoppingBag, Star, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
@@ -16,6 +17,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { addItem } = useCartStore();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { t, language } = useLanguage();
+  const { settings } = useStoreSettings();
 
   const getBadgeVariant = (badge?: string) => {
     switch (badge) {
@@ -57,6 +59,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const isFav = isFavorite(product.id);
 
+  // Stock status
+  const isLowStock = product.stockQuantity !== undefined && 
+    product.lowStockThreshold !== undefined &&
+    product.stockQuantity > 0 && 
+    product.stockQuantity <= product.lowStockThreshold;
+  
+  const isOutOfStock = product.stockQuantity !== undefined && product.stockQuantity <= 0;
+
   return (
     <div className="group relative overflow-hidden rounded-xl bg-card shadow-soft transition-all duration-300 hover:shadow-hover">
       {/* Image container */}
@@ -75,9 +85,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 {getBadgeText(product.badge)}
               </Badge>
             )}
-            {!product.inStock && (
+            {(isOutOfStock || !product.inStock) && (
               <Badge variant="outline" className="bg-background/80">
                 {t('product.outOfStock')}
+              </Badge>
+            )}
+            {isLowStock && product.inStock && (
+              <Badge className="bg-amber-100 text-amber-800 shadow-sm">
+                <AlertTriangle className="h-3 w-3 mr-1" />
+                {language === 'ar' 
+                  ? `فقط ${product.stockQuantity}!` 
+                  : `Only ${product.stockQuantity}!`}
               </Badge>
             )}
           </div>
@@ -106,7 +124,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               size="icon"
               className="h-12 w-12 rounded-full shadow-lg"
               onClick={handleAddToCart}
-              disabled={!product.inStock}
+              disabled={!product.inStock || isOutOfStock}
             >
               <ShoppingBag className="h-5 w-5" />
             </Button>
@@ -142,9 +160,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {language === 'ar' ? product.name : product.nameEn}
           </h3>
         </Link>
-        <p className="mb-3 text-xs text-muted-foreground line-clamp-1">
+        <p className="mb-2 text-xs text-muted-foreground line-clamp-1">
           {language === 'ar' ? product.nameEn : product.name}
         </p>
+
+        {/* Supplier Name - if enabled in settings */}
+        {settings?.show_supplier_name && product.supplierName && (
+          <p className="mb-2 text-xs text-primary">
+            {language === 'ar' ? product.supplierNameAr || product.supplierName : product.supplierName}
+          </p>
+        )}
         
         {/* Price */}
         <div className="flex items-center gap-2">

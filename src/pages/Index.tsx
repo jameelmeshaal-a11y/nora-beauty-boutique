@@ -1,15 +1,20 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
+import MegaMenu from "@/components/navigation/MegaMenu";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { isRTL } = useLanguage();
+  
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={isRTL ? "rtl" : "ltr"}>
       <Navbar />
+      <MegaMenu />
       <CartDrawer />
       <main>
         <HeroSection />
