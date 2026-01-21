@@ -12,6 +12,12 @@ import honeyLipOil from "@/assets/products/honey-lip-oil.jpg";
 import roseGoldShimmerGloss from "@/assets/products/rose-gold-shimmer-gloss.jpg";
 import berryPlumLipstick from "@/assets/products/berry-plum-lipstick.jpg";
 import pinkShimmerLipGloss from "@/assets/products/pink-shimmer-lip-gloss.jpg";
+import lipstick1 from "@/assets/products/lipstick-1.jpg";
+import lipstick2 from "@/assets/products/lipstick-2.jpg";
+import lipstick3 from "@/assets/products/lipstick-3.jpg";
+import lipGloss1 from "@/assets/products/lip-gloss-1.jpg";
+import lipGloss2 from "@/assets/products/lip-gloss-2.jpg";
+import lipOil1 from "@/assets/products/lip-oil-1.jpg";
 
 // Map for local assets
 const localAssets: Record<string, string> = {
@@ -19,6 +25,12 @@ const localAssets: Record<string, string> = {
   '/src/assets/products/rose-gold-shimmer-gloss.jpg': roseGoldShimmerGloss,
   '/src/assets/products/berry-plum-lipstick.jpg': berryPlumLipstick,
   '/src/assets/products/pink-shimmer-lip-gloss.jpg': pinkShimmerLipGloss,
+  '/src/assets/products/lipstick-1.jpg': lipstick1,
+  '/src/assets/products/lipstick-2.jpg': lipstick2,
+  '/src/assets/products/lipstick-3.jpg': lipstick3,
+  '/src/assets/products/lip-gloss-1.jpg': lipGloss1,
+  '/src/assets/products/lip-gloss-2.jpg': lipGloss2,
+  '/src/assets/products/lip-oil-1.jpg': lipOil1,
 };
 
 interface Product {
@@ -55,6 +67,17 @@ const getImageUrl = (imageUrl: string | null): string => {
   // Check if it's a local asset path
   if (localAssets[imageUrl]) {
     return localAssets[imageUrl];
+  }
+  // For Supabase storage URLs, return as is
+  if (imageUrl.startsWith('http')) {
+    return imageUrl;
+  }
+  // For relative paths that might be local assets
+  const cleanPath = imageUrl.replace(/^\//, '');
+  for (const [key, value] of Object.entries(localAssets)) {
+    if (key.includes(cleanPath) || cleanPath.includes(key.replace('/src/assets/', ''))) {
+      return value;
+    }
   }
   return imageUrl;
 };
