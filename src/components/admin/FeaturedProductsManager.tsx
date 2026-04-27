@@ -38,9 +38,11 @@ const FeaturedProductsManager = ({ products, onUpdate }: FeaturedProductsManager
   ) => {
     setUpdatingId(productId);
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ [field]: !currentValue })
+      const updateData: Record<string, boolean> = {};
+      updateData[field] = !currentValue;
+      const { error } = await (supabase
+        .from('products') as any)
+        .update(updateData)
         .eq('id', productId);
 
       if (error) throw error;
