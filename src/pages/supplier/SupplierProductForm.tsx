@@ -250,45 +250,53 @@ const SupplierProductForm = () => {
                 />
               </div>
 
-              {/* Names */}
-              <div className="grid gap-4 sm:grid-cols-2">
+              {/* Names — 3 languages */}
+              <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'اسم المنتج (English) *' : 'Product Name (English) *'}</Label>
-                  <Input
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Product Name"
-                    required
-                  />
+                  <Label>🇬🇧 {language === 'ar' ? 'الاسم (English) *' : language === 'ru' ? 'Название (EN) *' : 'Name (English) *'}</Label>
+                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product Name" maxLength={200} required />
                 </div>
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'اسم المنتج (العربية)' : 'Product Name (Arabic)'}</Label>
-                  <Input
-                    value={form.name_ar}
-                    onChange={(e) => setForm({ ...form, name_ar: e.target.value })}
-                    placeholder="اسم المنتج"
-                  />
+                  <Label>🇸🇦 {language === 'ar' ? 'الاسم (العربية)' : language === 'ru' ? 'Название (AR)' : 'Name (Arabic)'}</Label>
+                  <Input value={form.name_ar} onChange={(e) => setForm({ ...form, name_ar: e.target.value })} placeholder="اسم المنتج" maxLength={200} />
+                </div>
+                <div className="space-y-2">
+                  <Label>🇷🇺 {language === 'ar' ? 'الاسم (الروسية)' : language === 'ru' ? 'Название (RU)' : 'Name (Russian)'}</Label>
+                  <Input value={form.name_ru} onChange={(e) => setForm({ ...form, name_ru: e.target.value })} placeholder="Название" maxLength={200} />
                 </div>
               </div>
 
-              {/* Descriptions */}
-              <div className="grid gap-4 sm:grid-cols-2">
+              {/* Descriptions — 3 languages */}
+              <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'الوصف (English)' : 'Description (English)'}</Label>
-                  <Textarea
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    rows={3}
-                  />
+                  <Label>🇬🇧 {language === 'ar' ? 'الوصف (English)' : 'Description (EN)'}</Label>
+                  <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} maxLength={2000} />
                 </div>
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'الوصف (العربية)' : 'Description (Arabic)'}</Label>
-                  <Textarea
-                    value={form.description_ar}
-                    onChange={(e) => setForm({ ...form, description_ar: e.target.value })}
-                    rows={3}
-                  />
+                  <Label>🇸🇦 {language === 'ar' ? 'الوصف (العربية)' : 'Description (AR)'}</Label>
+                  <Textarea value={form.description_ar} onChange={(e) => setForm({ ...form, description_ar: e.target.value })} rows={3} maxLength={2000} />
                 </div>
+                <div className="space-y-2">
+                  <Label>🇷🇺 {language === 'ar' ? 'الوصف (الروسية)' : 'Description (RU)'}</Label>
+                  <Textarea value={form.description_ru} onChange={(e) => setForm({ ...form, description_ru: e.target.value })} rows={3} maxLength={2000} placeholder="Описание" />
+                </div>
+              </div>
+
+              {/* Brand */}
+              <div className="space-y-2">
+                <Label>{language === 'ar' ? 'العلامة التجارية' : language === 'ru' ? 'Бренд' : 'Brand'}</Label>
+                <Select value={form.brand_id} onValueChange={(v) => setForm({ ...form, brand_id: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={language === 'ar' ? 'اختر العلامة' : language === 'ru' ? 'Выберите бренд' : 'Select brand'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.map((b) => (
+                      <SelectItem key={b.id} value={b.id}>
+                        {language === 'ar' ? b.name_ar || b.name : language === 'ru' ? b.name_ru || b.name : b.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Pricing */}
