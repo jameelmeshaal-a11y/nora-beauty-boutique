@@ -35,15 +35,19 @@ const SupplierProductForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [brands, setBrands] = useState<{ id: string; name: string; name_ar: string | null; name_ru: string | null }[]>([]);
   const [form, setForm] = useState({
     name: '',
     name_ar: '',
+    name_ru: '',
     description: '',
     description_ar: '',
+    description_ru: '',
     price: '',
     original_price: '',
     category: '',
     category_id: '',
+    brand_id: '',
     image_url: '',
     images: [] as string[],
     stock_quantity: '',
@@ -53,6 +57,12 @@ const SupplierProductForm = () => {
     is_bestseller: false,
     is_new: true,
   });
+
+  // Load brands
+  useEffect(() => {
+    supabase.from('brands').select('id, name, name_ar, name_ru').eq('is_active', true).order('sort_order')
+      .then(({ data }) => data && setBrands(data as any));
+  }, []);
 
   // Fetch product if editing
   useEffect(() => {
@@ -81,12 +91,15 @@ const SupplierProductForm = () => {
       setForm({
         name: data.name || '',
         name_ar: data.name_ar || '',
+        name_ru: (data as any).name_ru || '',
         description: data.description || '',
         description_ar: data.description_ar || '',
+        description_ru: (data as any).description_ru || '',
         price: data.price?.toString() || '',
         original_price: data.original_price?.toString() || '',
         category: data.category || '',
         category_id: data.category_id || '',
+        brand_id: (data as any).brand_id || '',
         image_url: data.image_url || '',
         images: data.images || [],
         stock_quantity: data.stock_quantity?.toString() || '0',
@@ -123,12 +136,15 @@ const SupplierProductForm = () => {
       const productData = {
         name: form.name,
         name_ar: form.name_ar || null,
+        name_ru: form.name_ru || null,
         description: form.description || null,
         description_ar: form.description_ar || null,
+        description_ru: form.description_ru || null,
         price: parseFloat(form.price),
         original_price: form.original_price ? parseFloat(form.original_price) : null,
         category: form.category || 'cosmetics',
         category_id: form.category_id || null,
+        brand_id: form.brand_id || null,
         image_url: form.images[0] || form.image_url || null,
         images: form.images.length > 0 ? form.images : null,
         stock_quantity: parseInt(form.stock_quantity) || 0,
@@ -234,45 +250,53 @@ const SupplierProductForm = () => {
                 />
               </div>
 
-              {/* Names */}
-              <div className="grid gap-4 sm:grid-cols-2">
+              {/* Names — 3 languages */}
+              <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'اسم المنتج (English) *' : 'Product Name (English) *'}</Label>
-                  <Input
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Product Name"
-                    required
-                  />
+                  <Label>🇬🇧 {language === 'ar' ? 'الاسم (English) *' : language === 'ru' ? 'Название (EN) *' : 'Name (English) *'}</Label>
+                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Product Name" maxLength={200} required />
                 </div>
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'اسم المنتج (العربية)' : 'Product Name (Arabic)'}</Label>
-                  <Input
-                    value={form.name_ar}
-                    onChange={(e) => setForm({ ...form, name_ar: e.target.value })}
-                    placeholder="اسم المنتج"
-                  />
+                  <Label>🇸🇦 {language === 'ar' ? 'الاسم (العربية)' : language === 'ru' ? 'Название (AR)' : 'Name (Arabic)'}</Label>
+                  <Input value={form.name_ar} onChange={(e) => setForm({ ...form, name_ar: e.target.value })} placeholder="اسم المنتج" maxLength={200} />
+                </div>
+                <div className="space-y-2">
+                  <Label>🇷🇺 {language === 'ar' ? 'الاسم (الروسية)' : language === 'ru' ? 'Название (RU)' : 'Name (Russian)'}</Label>
+                  <Input value={form.name_ru} onChange={(e) => setForm({ ...form, name_ru: e.target.value })} placeholder="Название" maxLength={200} />
                 </div>
               </div>
 
-              {/* Descriptions */}
-              <div className="grid gap-4 sm:grid-cols-2">
+              {/* Descriptions — 3 languages */}
+              <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'الوصف (English)' : 'Description (English)'}</Label>
-                  <Textarea
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    rows={3}
-                  />
+                  <Label>🇬🇧 {language === 'ar' ? 'الوصف (English)' : 'Description (EN)'}</Label>
+                  <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} maxLength={2000} />
                 </div>
                 <div className="space-y-2">
-                  <Label>{language === 'ar' ? 'الوصف (العربية)' : 'Description (Arabic)'}</Label>
-                  <Textarea
-                    value={form.description_ar}
-                    onChange={(e) => setForm({ ...form, description_ar: e.target.value })}
-                    rows={3}
-                  />
+                  <Label>🇸🇦 {language === 'ar' ? 'الوصف (العربية)' : 'Description (AR)'}</Label>
+                  <Textarea value={form.description_ar} onChange={(e) => setForm({ ...form, description_ar: e.target.value })} rows={3} maxLength={2000} />
                 </div>
+                <div className="space-y-2">
+                  <Label>🇷🇺 {language === 'ar' ? 'الوصف (الروسية)' : 'Description (RU)'}</Label>
+                  <Textarea value={form.description_ru} onChange={(e) => setForm({ ...form, description_ru: e.target.value })} rows={3} maxLength={2000} placeholder="Описание" />
+                </div>
+              </div>
+
+              {/* Brand */}
+              <div className="space-y-2">
+                <Label>{language === 'ar' ? 'العلامة التجارية' : language === 'ru' ? 'Бренд' : 'Brand'}</Label>
+                <Select value={form.brand_id} onValueChange={(v) => setForm({ ...form, brand_id: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={language === 'ar' ? 'اختر العلامة' : language === 'ru' ? 'Выберите бренд' : 'Select brand'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.map((b) => (
+                      <SelectItem key={b.id} value={b.id}>
+                        {language === 'ar' ? b.name_ar || b.name : language === 'ru' ? b.name_ru || b.name : b.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Pricing */}
