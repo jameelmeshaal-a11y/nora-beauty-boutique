@@ -21,6 +21,7 @@ import SupplierRegister from "./pages/supplier/SupplierRegister";
 import SupplierDashboard from "./pages/supplier/SupplierDashboard";
 import SupplierProductForm from "./pages/supplier/SupplierProductForm";
 import CategoryPage from "./pages/CategoryPage";
+import BrandPage from "./pages/BrandPage";
 
 const queryClient = new QueryClient();
 
