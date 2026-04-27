@@ -25,12 +25,14 @@ const SupplierRegister = () => {
   const [form, setForm] = useState({
     company_name: '',
     company_name_ar: '',
+    company_name_ru: '',
     description: '',
     description_ar: '',
     contact_email: '',
     contact_phone: '',
     address: '',
     address_ar: '',
+    bank_account: '',
   });
 
   // Redirect if already a supplier
