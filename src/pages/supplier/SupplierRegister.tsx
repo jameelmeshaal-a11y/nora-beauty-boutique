@@ -153,31 +153,22 @@ const SupplierRegister = () => {
             
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Company Names */}
-                <div className="grid gap-4 sm:grid-cols-2">
+                {/* Company Names — 3 langs */}
+                <div className="grid gap-4 sm:grid-cols-3">
                   <div className="space-y-2">
                     <Label htmlFor="company_name" className="flex items-center gap-2">
                       <Building2 className="h-4 w-4" />
-                      {language === 'ar' ? 'اسم الشركة (English) *' : 'Company Name (English) *'}
+                      🇬🇧 {language === 'ar' ? 'الاسم (EN) *' : language === 'ru' ? 'Название (EN) *' : 'Name (EN) *'}
                     </Label>
-                    <Input
-                      id="company_name"
-                      value={form.company_name}
-                      onChange={(e) => setForm({ ...form, company_name: e.target.value })}
-                      placeholder="Company Name"
-                      required
-                    />
+                    <Input id="company_name" value={form.company_name} onChange={(e) => setForm({ ...form, company_name: e.target.value })} placeholder="Company Name" required maxLength={100} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="company_name_ar">
-                      {language === 'ar' ? 'اسم الشركة (العربية)' : 'Company Name (Arabic)'}
-                    </Label>
-                    <Input
-                      id="company_name_ar"
-                      value={form.company_name_ar}
-                      onChange={(e) => setForm({ ...form, company_name_ar: e.target.value })}
-                      placeholder="اسم الشركة"
-                    />
+                    <Label htmlFor="company_name_ar">🇸🇦 {language === 'ar' ? 'الاسم (العربية)' : 'Name (AR)'}</Label>
+                    <Input id="company_name_ar" value={form.company_name_ar} onChange={(e) => setForm({ ...form, company_name_ar: e.target.value })} placeholder="اسم الشركة" maxLength={100} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company_name_ru">🇷🇺 {language === 'ar' ? 'الاسم (الروسية)' : language === 'ru' ? 'Название (RU)' : 'Name (RU)'}</Label>
+                    <Input id="company_name_ru" value={form.company_name_ru} onChange={(e) => setForm({ ...form, company_name_ru: e.target.value })} placeholder="Название компании" maxLength={100} />
                   </div>
                 </div>
 
