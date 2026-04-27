@@ -7,6 +7,7 @@ export interface Supplier {
   user_id: string;
   company_name: string;
   company_name_ar: string | null;
+  company_name_ru: string | null;
   logo_url: string | null;
   description: string | null;
   description_ar: string | null;
@@ -14,6 +15,9 @@ export interface Supplier {
   contact_phone: string | null;
   address: string | null;
   address_ar: string | null;
+  bank_account: string | null;
+  total_sales: number | null;
+  country: string | null;
   rating: number;
   reviews_count: number;
   is_verified: boolean;
