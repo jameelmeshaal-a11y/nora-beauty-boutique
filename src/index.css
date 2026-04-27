@@ -47,15 +47,27 @@
     --gold-light: 43 74% 90%;
     --champagne: 35 40% 95%;
 
+    /* Русская Красота — Russian Beauty Identity */
+    --crimson: 0 75% 35%;          /* #8B0000 deep crimson */
+    --crimson-bright: 354 65% 48%; /* #CC2936 bright crimson */
+    --crimson-light: 354 80% 95%;
+    --russian-gold: 46 65% 53%;    /* #D4AF37 royal gold */
+    --russian-gold-light: 46 80% 92%;
+    --slavic-cream: 35 45% 97%;
+
     /* Gradients */
     --gradient-rose: linear-gradient(135deg, hsl(340 100% 97%) 0%, hsl(340 50% 92%) 100%);
     --gradient-gold: linear-gradient(135deg, hsl(43 74% 49%) 0%, hsl(35 80% 60%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(340 100% 97%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-russian: linear-gradient(135deg, hsl(0 75% 35%) 0%, hsl(354 65% 48%) 50%, hsl(346 70% 55%) 100%);
+    --gradient-russian-soft: linear-gradient(135deg, hsl(354 80% 97%) 0%, hsl(46 80% 96%) 100%);
+    --gradient-royal: linear-gradient(135deg, hsl(0 75% 30%) 0%, hsl(46 65% 53%) 100%);
 
     /* Shadows */
     --shadow-soft: 0 4px 20px -2px hsl(340 50% 50% / 0.1);
     --shadow-card: 0 8px 30px -8px hsl(340 50% 50% / 0.15);
     --shadow-hover: 0 12px 40px -12px hsl(340 50% 50% / 0.25);
+    --shadow-russian: 0 10px 30px -10px hsl(0 75% 35% / 0.4);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -129,41 +141,38 @@
     background-clip: text;
   }
 
-  .bg-gradient-rose {
-    background: var(--gradient-rose);
+  .text-gradient-russian {
+    background: var(--gradient-royal);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .bg-gradient-hero {
-    background: var(--gradient-hero);
+  .bg-gradient-rose { background: var(--gradient-rose); }
+  .bg-gradient-hero { background: var(--gradient-hero); }
+  .bg-gradient-russian { background: var(--gradient-russian); }
+  .bg-gradient-russian-soft { background: var(--gradient-russian-soft); }
+  .bg-gradient-royal { background: var(--gradient-royal); }
+
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-hover { box-shadow: var(--shadow-hover); }
+  .shadow-russian { box-shadow: var(--shadow-russian); }
+
+  .text-crimson { color: hsl(var(--crimson-bright)); }
+  .text-russian-gold { color: hsl(var(--russian-gold)); }
+  .bg-crimson { background-color: hsl(var(--crimson-bright)); }
+  .bg-russian-gold { background-color: hsl(var(--russian-gold)); }
+  .border-russian-gold { border-color: hsl(var(--russian-gold)); }
+
+  .slavic-pattern {
+    background-image: repeating-linear-gradient(45deg, hsl(var(--russian-gold) / 0.15) 0, hsl(var(--russian-gold) / 0.15) 2px, transparent 2px, transparent 12px);
   }
 
-  .shadow-soft {
-    box-shadow: var(--shadow-soft);
-  }
-
-  .shadow-card {
-    box-shadow: var(--shadow-card);
-  }
-
-  .shadow-hover {
-    box-shadow: var(--shadow-hover);
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 2s ease-in-out infinite;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out forwards;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
+  .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+  .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
 }
 
 @keyframes float {
