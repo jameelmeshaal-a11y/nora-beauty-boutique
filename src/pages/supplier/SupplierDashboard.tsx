@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, ShoppingCart, BarChart3, Settings,
-  Plus, Edit, Trash2, ChevronLeft, Loader2, AlertCircle, Eye
+  Plus, Edit, Trash2, ChevronLeft, Loader2, AlertCircle, Eye, Wallet,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,9 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import SupplierAnalytics from '@/components/supplier/SupplierAnalytics';
+import PayoutRequests from '@/components/supplier/PayoutRequests';
+import SupplierSettings from '@/components/supplier/SupplierSettings';
 
 const SupplierDashboard = () => {
   const { user } = useAuth();
