@@ -35,15 +35,19 @@ const SupplierProductForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [brands, setBrands] = useState<{ id: string; name: string; name_ar: string | null; name_ru: string | null }[]>([]);
   const [form, setForm] = useState({
     name: '',
     name_ar: '',
+    name_ru: '',
     description: '',
     description_ar: '',
+    description_ru: '',
     price: '',
     original_price: '',
     category: '',
     category_id: '',
+    brand_id: '',
     image_url: '',
     images: [] as string[],
     stock_quantity: '',
@@ -53,6 +57,12 @@ const SupplierProductForm = () => {
     is_bestseller: false,
     is_new: true,
   });
+
+  // Load brands
+  useEffect(() => {
+    supabase.from('brands').select('id, name, name_ar, name_ru').eq('is_active', true).order('sort_order')
+      .then(({ data }) => data && setBrands(data as any));
+  }, []);
 
   // Fetch product if editing
   useEffect(() => {
