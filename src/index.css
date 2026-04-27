@@ -141,41 +141,38 @@
     background-clip: text;
   }
 
-  .bg-gradient-rose {
-    background: var(--gradient-rose);
+  .text-gradient-russian {
+    background: var(--gradient-royal);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .bg-gradient-hero {
-    background: var(--gradient-hero);
+  .bg-gradient-rose { background: var(--gradient-rose); }
+  .bg-gradient-hero { background: var(--gradient-hero); }
+  .bg-gradient-russian { background: var(--gradient-russian); }
+  .bg-gradient-russian-soft { background: var(--gradient-russian-soft); }
+  .bg-gradient-royal { background: var(--gradient-royal); }
+
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-hover { box-shadow: var(--shadow-hover); }
+  .shadow-russian { box-shadow: var(--shadow-russian); }
+
+  .text-crimson { color: hsl(var(--crimson-bright)); }
+  .text-russian-gold { color: hsl(var(--russian-gold)); }
+  .bg-crimson { background-color: hsl(var(--crimson-bright)); }
+  .bg-russian-gold { background-color: hsl(var(--russian-gold)); }
+  .border-russian-gold { border-color: hsl(var(--russian-gold)); }
+
+  .slavic-pattern {
+    background-image: repeating-linear-gradient(45deg, hsl(var(--russian-gold) / 0.15) 0, hsl(var(--russian-gold) / 0.15) 2px, transparent 2px, transparent 12px);
   }
 
-  .shadow-soft {
-    box-shadow: var(--shadow-soft);
-  }
-
-  .shadow-card {
-    box-shadow: var(--shadow-card);
-  }
-
-  .shadow-hover {
-    box-shadow: var(--shadow-hover);
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 2s ease-in-out infinite;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.5s ease-out forwards;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
+  .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+  .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
 }
 
 @keyframes float {
