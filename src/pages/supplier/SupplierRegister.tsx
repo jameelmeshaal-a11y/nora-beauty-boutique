@@ -257,6 +257,20 @@ const SupplierRegister = () => {
                   </div>
                 </div>
 
+                {/* Bank Account */}
+                <div className="space-y-2">
+                  <Label htmlFor="bank_account">
+                    {language === 'ar' ? 'الحساب البنكي / IBAN (اختياري)' : language === 'ru' ? 'Банковский счёт / IBAN' : 'Bank Account / IBAN (optional)'}
+                  </Label>
+                  <Input
+                    id="bank_account"
+                    value={form.bank_account}
+                    onChange={(e) => setForm({ ...form, bank_account: e.target.value })}
+                    placeholder="SA00 0000 0000 0000 0000 0000"
+                    maxLength={50}
+                  />
+                </div>
+
                 {/* Info Box */}
                 <div className="rounded-lg bg-secondary/50 p-4">
                   <h3 className="font-medium">
