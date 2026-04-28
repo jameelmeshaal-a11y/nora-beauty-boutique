@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { ChevronRight, CreditCard, Truck, MapPin, Phone, User, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { ChevronRight, CreditCard, Truck, MapPin, Phone, User, Loader2, Tag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCartStore } from "@/store/cartStore";
 import { useAuth } from "@/hooks/useAuth";
+import { useCoupon } from "@/hooks/useCoupon";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -37,7 +38,10 @@ const CheckoutPage = () => {
   const { items, total, clearCart } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cod");
-  
+  const [couponInput, setCouponInput] = useState("");
+  const { applied, error: couponError, loading: couponLoading, applyCoupon, clearCoupon } = useCoupon();
+  const [searchParams] = useSearchParams();
+
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -45,6 +49,18 @@ const CheckoutPage = () => {
     city: "",
     notes: ""
   });
+
+  // Capture influencer referral code (?ref=NORA15)
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) localStorage.setItem("noura_ref", ref);
+  }, [searchParams]);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    const res = await applyCoupon(couponInput.trim(), total());
+    if (res) toast.success(`تم تطبيق الكوبون: خصم ${res.discountAmount.toFixed(2)} ر.س`);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -114,7 +130,8 @@ const CheckoutPage = () => {
   };
 
   const shippingCost = total() >= 200 ? 0 : 25;
-  const grandTotal = total() + shippingCost;
+  const discount = applied?.discountAmount || 0;
+  const grandTotal = Math.max(0, total() + shippingCost - discount);
 
   if (!user) {
     return (
