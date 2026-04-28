@@ -22,6 +22,9 @@ import SupplierDashboard from "./pages/supplier/SupplierDashboard";
 import SupplierProductForm from "./pages/supplier/SupplierProductForm";
 import CategoryPage from "./pages/CategoryPage";
 import BrandPage from "./pages/BrandPage";
+import BrandsListPage from "./pages/BrandsListPage";
+import InfluencersPage from "./pages/InfluencersPage";
+import DealsPage from "./pages/DealsPage";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,9 @@ const App = () => (
                 <Route path="/category" element={<CategoryPage />} />
                 <Route path="/product/:id" element={<ProductDetailsPage />} />
                 <Route path="/brand/:slug" element={<BrandPage />} />
+                <Route path="/brands" element={<BrandsListPage />} />
+                <Route path="/influencers" element={<InfluencersPage />} />
+                <Route path="/deals" element={<DealsPage />} />
                 <Route path="/admin/*" element={<AdminDashboard />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />

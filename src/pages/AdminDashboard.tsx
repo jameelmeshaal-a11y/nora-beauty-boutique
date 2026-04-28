@@ -20,7 +20,13 @@ import {
   Save,
   Loader2,
   Star,
-  Image
+  Image,
+  Tag,
+  Award,
+  Users2,
+  Wallet,
+  Mic,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +57,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import FeaturedProductsManager from "@/components/admin/FeaturedProductsManager";
 import SiteImagesManager from "@/components/admin/SiteImagesManager";
+import BrandsManager from "@/components/admin/BrandsManager";
+import BannersManager from "@/components/admin/BannersManager";
+import CouponsManager from "@/components/admin/CouponsManager";
+import PayoutsManager from "@/components/admin/PayoutsManager";
+import InfluencersManager from "@/components/admin/InfluencersManager";
+import SuppliersManager from "@/components/admin/SuppliersManager";
+import AdminReports from "@/components/admin/AdminReports";
 
 interface Product {
   id: string;
@@ -281,10 +294,15 @@ const AdminDashboard = () => {
     { id: "overview", icon: LayoutDashboard, label: t('admin.dashboard') },
     { id: "products", icon: Package, label: t('admin.products') },
     { id: "featured", icon: Star, label: t('admin.featured') },
-    { id: "images", icon: Image, label: language === 'ar' ? 'صور الواجهة' : language === 'ru' ? 'Изображения' : 'Site Images' },
+    { id: "brands", icon: Award, label: language === 'ar' ? 'البراندات' : 'Brands' },
+    { id: "banners", icon: Image, label: language === 'ar' ? 'البنرات' : 'Banners' },
+    { id: "coupons", icon: Tag, label: language === 'ar' ? 'الكوبونات' : 'Coupons' },
+    { id: "influencers", icon: Mic, label: language === 'ar' ? 'المؤثرات' : 'Influencers' },
+    { id: "suppliers", icon: Users2, label: language === 'ar' ? 'الموردون' : 'Suppliers' },
+    { id: "payouts", icon: Wallet, label: language === 'ar' ? 'طلبات السحب' : 'Payouts' },
+    { id: "images", icon: Image, label: language === 'ar' ? 'صور الواجهة' : 'Site Images' },
     { id: "orders", icon: ShoppingCart, label: t('admin.orders') },
-    { id: "customers", icon: Users, label: t('admin.customers') },
-    { id: "analytics", icon: BarChart3, label: t('admin.analytics') },
+    { id: "reports", icon: TrendingUp, label: language === 'ar' ? 'التقارير' : 'Reports' },
     { id: "settings", icon: Settings, label: t('admin.settings') },
   ];
 
@@ -749,31 +767,14 @@ const AdminDashboard = () => {
             </div>
           )}
           
-          {activeTab === "customers" && (
-            <Card>
-              <CardHeader>
-                <CardTitle>إدارة العملاء</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">قريباً - إدارة بيانات العملاء</p>
-              </CardContent>
-            </Card>
-          )}
-          
-          {activeTab === "analytics" && (
-            <Card>
-              <CardHeader>
-                <CardTitle>التحليلات والإحصائيات</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">قريباً - تحليلات متقدمة للمبيعات</p>
-              </CardContent>
-            </Card>
-          )}
-          
-          {activeTab === "images" && (
-            <SiteImagesManager />
-          )}
+          {activeTab === "brands" && <BrandsManager />}
+          {activeTab === "banners" && <BannersManager />}
+          {activeTab === "coupons" && <CouponsManager />}
+          {activeTab === "influencers" && <InfluencersManager />}
+          {activeTab === "suppliers" && <SuppliersManager />}
+          {activeTab === "payouts" && <PayoutsManager />}
+          {activeTab === "reports" && <AdminReports />}
+          {activeTab === "images" && <SiteImagesManager />}
           
           {activeTab === "settings" && (
             <Card>

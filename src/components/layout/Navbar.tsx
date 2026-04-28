@@ -167,17 +167,33 @@ const Navbar = () => {
               </div>
             ))}
 
-            {/* About link at the end */}
+            {/* Russian-marketplace pages */}
             <Link
-              to="/about"
+              to="/brands"
               className={cn(
                 "px-3 py-2 text-sm font-medium transition-colors hover:text-primary rounded-md",
-                location.pathname === "/about"
-                  ? "text-primary"
-                  : "text-foreground"
+                location.pathname === "/brands" ? "text-primary" : "text-foreground"
               )}
             >
-              {t('nav.about')}
+              {language === "ar" ? "البراندات" : language === "ru" ? "Бренды" : "Brands"}
+            </Link>
+            <Link
+              to="/influencers"
+              className={cn(
+                "px-3 py-2 text-sm font-medium transition-colors hover:text-primary rounded-md",
+                location.pathname === "/influencers" ? "text-primary" : "text-foreground"
+              )}
+            >
+              {language === "ar" ? "المؤثرات" : language === "ru" ? "Эксперты" : "Influencers"}
+            </Link>
+            <Link
+              to="/deals"
+              className={cn(
+                "px-3 py-2 text-sm font-bold transition-colors rounded-md text-crimson",
+                location.pathname === "/deals" && "underline"
+              )}
+            >
+              {language === "ar" ? "🔥 العروض" : language === "ru" ? "🔥 Акции" : "🔥 Deals"}
             </Link>
           </div>
           
@@ -310,13 +326,9 @@ const Navbar = () => {
                 </div>
               ))}
 
-              <Link
-                to="/about"
-                className="text-sm font-medium text-foreground hover:text-primary py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.about')}
-              </Link>
+              <Link to="/brands" className="text-sm font-medium text-foreground hover:text-primary py-2" onClick={() => setIsMenuOpen(false)}>{language === "ar" ? "البراندات" : "Brands"}</Link>
+              <Link to="/influencers" className="text-sm font-medium text-foreground hover:text-primary py-2" onClick={() => setIsMenuOpen(false)}>{language === "ar" ? "المؤثرات" : "Influencers"}</Link>
+              <Link to="/deals" className="text-sm font-bold text-crimson py-2" onClick={() => setIsMenuOpen(false)}>{language === "ar" ? "🔥 العروض" : "🔥 Deals"}</Link>
 
               {user ? (
                 <>
