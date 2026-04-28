@@ -312,21 +312,44 @@ const CheckoutPage = () => {
                       </div>
                     ))}
                     
-                    <div className="border-t border-border pt-4">
-                      <div className="flex justify-between text-sm">
+                    <div className="border-t border-border pt-4 space-y-2">
+                      {/* Coupon input */}
+                      {!applied ? (
+                        <div className="flex gap-2">
+                          <Input value={couponInput} onChange={(e) => setCouponInput(e.target.value.toUpperCase())} placeholder="كود الخصم" className="text-center font-mono" />
+                          <Button type="button" variant="outline" onClick={handleApplyCoupon} disabled={couponLoading}>تطبيق</Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-950 rounded">
+                          <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
+                            <Tag className="h-4 w-4" />
+                            <span className="font-mono font-bold">{applied.code}</span>
+                          </div>
+                          <Button type="button" size="sm" variant="ghost" onClick={clearCoupon}><X className="h-3 w-3" /></Button>
+                        </div>
+                      )}
+                      {couponError && <p className="text-xs text-destructive">{couponError}</p>}
+
+                      <div className="flex justify-between text-sm pt-2">
                         <span>المجموع الفرعي</span>
                         <span>{total().toFixed(2)} ر.س</span>
                       </div>
-                      <div className="mt-2 flex justify-between text-sm">
+                      <div className="flex justify-between text-sm">
                         <span>الشحن</span>
                         <span>{shippingCost === 0 ? 'مجاني' : `${shippingCost} ر.س`}</span>
                       </div>
+                      {discount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>الخصم</span>
+                          <span>- {discount.toFixed(2)} ر.س</span>
+                        </div>
+                      )}
                       {total() < 200 && (
-                        <p className="mt-2 text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           أضف {(200 - total()).toFixed(2)} ر.س للحصول على شحن مجاني
                         </p>
                       )}
-                      <div className="mt-4 flex justify-between border-t border-border pt-4 text-lg font-bold">
+                      <div className="mt-3 flex justify-between border-t border-border pt-3 text-lg font-bold">
                         <span>الإجمالي</span>
                         <span className="text-primary">{grandTotal.toFixed(2)} ر.س</span>
                       </div>
