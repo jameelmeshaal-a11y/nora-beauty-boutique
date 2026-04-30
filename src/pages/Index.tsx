@@ -3,8 +3,9 @@ import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import RussianHero from "@/components/home/RussianHero";
 import BrandsGrid from "@/components/home/BrandsGrid";
+import ProductFlowGrid from "@/components/home/ProductFlowGrid";
+import CommunityStrip from "@/components/community/CommunityStrip";
 import InfluencersStrip from "@/components/home/InfluencersStrip";
-import FeaturedProducts from "@/components/home/FeaturedProducts";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -19,7 +20,8 @@ const Index = () => {
       <main>
         <RussianHero />
         <BrandsGrid />
-        <FeaturedProducts />
+        <ProductFlowGrid />
+        <CommunityStrip />
         <CategoriesSection />
         <InfluencersStrip />
         <FeaturesSection />

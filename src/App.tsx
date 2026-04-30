@@ -25,6 +25,7 @@ import BrandPage from "./pages/BrandPage";
 import BrandsListPage from "./pages/BrandsListPage";
 import InfluencersPage from "./pages/InfluencersPage";
 import DealsPage from "./pages/DealsPage";
+import CommunityPage from "./pages/CommunityPage";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
                 <Route path="/brands" element={<BrandsListPage />} />
                 <Route path="/influencers" element={<InfluencersPage />} />
                 <Route path="/deals" element={<DealsPage />} />
+                <Route path="/community" element={<CommunityPage />} />
                 <Route path="/admin/*" element={<AdminDashboard />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
