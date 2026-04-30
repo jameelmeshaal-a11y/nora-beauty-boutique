@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 
 interface InlineBannerProps {
   image: string;
@@ -38,44 +38,60 @@ const InlineBanner = ({
     language === "ar" ? subtitleAr : language === "ru" ? subtitleRu || subtitleEn : subtitleEn;
   const cta = language === "ar" ? ctaAr : ctaEn;
 
+  // Premium gradient overlays — much richer than plain colors
   const overlayClass =
     overlay === "crimson"
-      ? "bg-gradient-to-r from-[hsl(var(--crimson))]/85 via-[hsl(var(--crimson))]/30 to-transparent"
+      ? "bg-gradient-to-r from-[hsl(var(--crimson))]/95 via-[hsl(var(--crimson))]/55 to-transparent"
       : overlay === "dark"
-      ? "bg-gradient-to-r from-black/70 via-black/30 to-transparent"
-      : "bg-gradient-to-r from-white/90 via-white/40 to-transparent";
+      ? "bg-gradient-to-r from-black/85 via-black/45 to-black/10"
+      : "bg-gradient-to-r from-white/95 via-white/60 to-white/10";
 
   const textColor = overlay === "soft" ? "text-foreground" : "text-white";
   const Arrow = isRTL ? ArrowLeft : ArrowRight;
 
+  // Apply RTL flip for proper alignment
+  const flipOverlay = (align === "left" && !isRTL) || (align === "right" && isRTL);
+
   return (
     <Link
       to={link}
-      className="block group relative overflow-hidden rounded-2xl shadow-card hover:shadow-russian transition-shadow"
+      className="block group relative overflow-hidden rounded-3xl shadow-card hover:shadow-russian transition-all duration-500"
     >
-      <div className="relative h-44 md:h-56 lg:h-64">
+      <div className="relative h-56 md:h-72 lg:h-80">
         <img
           src={image}
           alt={titleEn}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms]"
         />
-        <div className={`absolute inset-0 ${overlayClass} ${align === "left" ? "scale-x-[-1]" : ""}`} />
         <div
-          className={`relative z-10 h-full flex items-center px-6 md:px-12 ${
+          className={`absolute inset-0 ${overlayClass} ${flipOverlay ? "scale-x-[-1]" : ""}`}
+        />
+
+        {/* Decorative gold corner accents */}
+        <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-russian-gold/40 rounded-tl-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-russian-gold/40 rounded-br-3xl pointer-events-none" />
+
+        <div
+          className={`relative z-10 h-full flex items-center px-6 md:px-14 ${
             align === "right" ? "justify-start" : "justify-end"
           }`}
         >
-          <div className={`max-w-md ${textColor} ${align === "left" ? "text-right" : "text-left"}`}>
+          <div
+            className={`max-w-md ${textColor} ${align === "left" ? "text-right" : "text-left"}`}
+          >
             {subtitle && (
-              <p className="text-xs md:text-sm uppercase tracking-widest opacity-90 mb-1 font-semibold">
-                {subtitle}
-              </p>
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className={`h-4 w-4 ${overlay === "soft" ? "text-crimson" : "text-russian-gold"}`} />
+                <p className="text-xs md:text-sm uppercase tracking-[0.2em] opacity-95 font-bold">
+                  {subtitle}
+                </p>
+              </div>
             )}
-            <h3 className="text-2xl md:text-4xl font-extrabold leading-tight drop-shadow mb-3">
+            <h3 className="text-3xl md:text-5xl font-black leading-[1.05] drop-shadow-lg mb-4">
               {title}
             </h3>
-            <span className="inline-flex items-center gap-2 px-5 py-2 bg-russian-gold text-foreground rounded-full text-sm font-bold group-hover:gap-3 transition-all">
+            <span className="inline-flex items-center gap-2 px-7 py-3 bg-russian-gold text-foreground rounded-full text-sm md:text-base font-extrabold group-hover:gap-4 group-hover:bg-white transition-all shadow-lg">
               {cta}
               <Arrow className="h-4 w-4" />
             </span>
