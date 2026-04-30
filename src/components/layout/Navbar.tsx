@@ -37,6 +37,7 @@ const Navbar = () => {
   const staticLinks = [
     { href: "/", label: t('nav.home') },
     { href: "/products", label: t('nav.products') },
+    { href: "/community", label: language === 'ar' ? 'المنتدى' : language === 'ru' ? 'Сообщество' : 'Community' },
   ];
 
   return (
