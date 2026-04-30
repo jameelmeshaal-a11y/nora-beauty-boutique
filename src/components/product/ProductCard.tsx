@@ -112,10 +112,15 @@ const ProductCard = ({ product, variants = [] }: ProductCardProps) => {
           <img
             src={currentImage}
             alt={language === 'ar' ? product.name : product.nameEn}
+            loading="lazy"
             className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = '/placeholder.svg';
+              // Branded fallback: pretty crimson→gold gradient with brand initial
+              const initial = (product.brand || product.nameEn || 'R').charAt(0).toUpperCase();
+              const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23CC2936'/><stop offset='100%' stop-color='%23D4AF37'/></linearGradient></defs><rect width='400' height='400' fill='url(%23g)'/><text x='50%' y='54%' font-family='Georgia,serif' font-size='180' font-weight='700' fill='white' fill-opacity='0.85' text-anchor='middle' dominant-baseline='middle'>${initial}</text></svg>`;
+              target.src = `data:image/svg+xml;utf8,${svg}`;
+              target.onerror = null;
             }}
           />
           
