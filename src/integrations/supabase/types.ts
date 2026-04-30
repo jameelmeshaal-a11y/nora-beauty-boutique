@@ -172,6 +172,72 @@ export type Database = {
           },
         ]
       }
+      community_posts: {
+        Row: {
+          author_avatar: string | null
+          author_name: string
+          content: string | null
+          content_ar: string | null
+          content_ru: string | null
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          likes_count: number | null
+          media_type: string
+          media_url: string
+          product_tag: string | null
+          sort_order: number | null
+          thumbnail_url: string | null
+          title: string
+          title_ar: string | null
+          title_ru: string | null
+          views_count: number | null
+        }
+        Insert: {
+          author_avatar?: string | null
+          author_name: string
+          content?: string | null
+          content_ar?: string | null
+          content_ru?: string | null
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          likes_count?: number | null
+          media_type?: string
+          media_url: string
+          product_tag?: string | null
+          sort_order?: number | null
+          thumbnail_url?: string | null
+          title: string
+          title_ar?: string | null
+          title_ru?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          author_avatar?: string | null
+          author_name?: string
+          content?: string | null
+          content_ar?: string | null
+          content_ru?: string | null
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          likes_count?: number | null
+          media_type?: string
+          media_url?: string
+          product_tag?: string | null
+          sort_order?: number | null
+          thumbnail_url?: string | null
+          title?: string
+          title_ar?: string | null
+          title_ru?: string | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       company_info: {
         Row: {
           about: string | null
