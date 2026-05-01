@@ -37,52 +37,24 @@ interface ProductVariant {
   in_stock: boolean | null;
 }
 
-interface BannerRow {
-  id: string;
-  title: string | null;
-  title_ar: string | null;
-  title_ru: string | null;
-  subtitle: string | null;
-  subtitle_ar: string | null;
-  subtitle_ru: string | null;
-  image_url: string;
-  link: string | null;
-}
-
-const FALLBACK_BANNERS = [
-  { image: inlineBanner1, link: "/deals" },
-  { image: inlineBanner2, link: "/category/skin" },
-  { image: inlineBanner3, link: "/category/body-care" },
-  { image: inlineBanner4, link: "/category/perfumes" },
-];
-
 const ProductFlowGrid = () => {
   const { language, isRTL } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [variants, setVariants] = useState<Map<string, ProductVariant[]>>(new Map());
-  const [banners, setBanners] = useState<BannerRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const [{ data }, { data: bannerData }] = await Promise.all([
-        supabase
-          .from("products")
-          .select(
-            "id, name, name_ar, brand, price, original_price, image_url, shades_count, rating, reviews_count, is_bestseller, is_new, in_stock"
-          )
-          .eq("is_active", true)
-          .order("is_featured", { ascending: false })
-          .order("is_bestseller", { ascending: false })
-          .order("created_at", { ascending: false })
-          .limit(120),
-        supabase
-          .from("banners")
-          .select("id, title, title_ar, title_ru, subtitle, subtitle_ar, subtitle_ru, image_url, link")
-          .eq("type", "inline")
-          .eq("is_active", true)
-          .order("sort_order"),
-      ]);
+      const { data } = await supabase
+        .from("products")
+        .select(
+          "id, name, name_ar, brand, price, original_price, image_url, shades_count, rating, reviews_count, is_bestseller, is_new, in_stock"
+        )
+        .eq("is_active", true)
+        .order("is_featured", { ascending: false })
+        .order("is_bestseller", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(120);
       if (data) {
         setProducts(data as Product[]);
         const ids = data.map((p) => p.id);
@@ -102,17 +74,76 @@ const ProductFlowGrid = () => {
           }
         }
       }
-      if (bannerData) setBanners(bannerData as BannerRow[]);
       setLoading(false);
     })();
   }, []);
+
+  // Premium banner rotation — full-width banners between every 2 product rows
+  const banners = [
+    {
+      image: inlineBanner1,
+      titleAr: "خصومات تصل إلى 50%",
+      titleRu: "Скидки до 50%",
+      titleEn: "Up to 50% Off",
+      subtitleAr: "أقوى عروض الجمال الروسي",
+      subtitleRu: "Лучшие предложения красоты",
+      subtitleEn: "Top Russian beauty deals",
+      ctaAr: "تسوقي العروض",
+      ctaEn: "Shop Deals",
+      link: "/deals",
+      align: "right" as const,
+      overlay: "crimson" as const,
+    },
+    {
+      image: inlineBanner2,
+      titleAr: "روتين البشرة الزجاجية",
+      titleRu: "Уход для сияющей кожи",
+      titleEn: "Glass Skin Routine",
+      subtitleAr: "منتجات روسية طبيعية للإشراق",
+      subtitleRu: "Натуральные русские продукты",
+      subtitleEn: "Natural Russian skincare",
+      ctaAr: "اكتشفي البشرة",
+      ctaEn: "Discover Skin",
+      link: "/category/skin",
+      align: "left" as const,
+      overlay: "soft" as const,
+    },
+    {
+      image: inlineBanner3,
+      titleAr: "العناية الفاخرة بالجسم",
+      titleRu: "Роскошный уход за телом",
+      titleEn: "Luxury Body Care",
+      subtitleAr: "زبدة وزيوت بمكونات سيبيرية",
+      subtitleRu: "Масла с сибирскими ингредиентами",
+      subtitleEn: "Butters & oils with Siberian botanicals",
+      ctaAr: "اكتشفي الجسم",
+      ctaEn: "Discover Body",
+      link: "/category/body-care",
+      align: "right" as const,
+      overlay: "dark" as const,
+    },
+    {
+      image: inlineBanner4,
+      titleAr: "عطور روسية فاخرة",
+      titleRu: "Роскошные русские ароматы",
+      titleEn: "Russian Luxury Fragrances",
+      subtitleAr: "بروكار · فابرليك · ميكسيت",
+      subtitleRu: "Brocard · Faberlic · Mixit",
+      subtitleEn: "Brocard · Faberlic · Mixit",
+      ctaAr: "اكتشفي العطور",
+      ctaEn: "Shop Fragrances",
+      link: "/category/perfumes",
+      align: "left" as const,
+      overlay: "crimson" as const,
+    },
+  ];
 
   const t = (ar: string, en: string, ru?: string) =>
     language === "ar" ? ar : language === "ru" ? ru || en : en;
 
   const Arrow = isRTL ? ArrowLeft : ArrowRight;
 
-  // Build rows of 4
+  // Build rows of 4 (mobile auto-collapses to 2). Banners insert after every 2nd row.
   const rows: Array<Product[]> = [];
   for (let i = 0; i < products.length; i += 4) {
     rows.push(products.slice(i, i + 4));
@@ -133,8 +164,6 @@ const ProductFlowGrid = () => {
   }
 
   let bannerIdx = 0;
-  const overlays: Array<"crimson" | "soft" | "dark"> = ["crimson", "soft", "dark", "crimson", "soft"];
-  const aligns: Array<"left" | "right"> = ["right", "left", "right", "left", "right"];
 
   return (
     <section className="py-10 md:py-14 bg-gradient-to-b from-secondary/10 via-background to-secondary/20">
@@ -166,16 +195,9 @@ const ProductFlowGrid = () => {
 
         <div className="space-y-6 md:space-y-8">
           {rows.map((row, rowIdx) => {
+            // Insert a banner after every 2nd completed row (rows 2, 4, 6, ...)
             const showBanner = rowIdx > 0 && (rowIdx + 1) % 2 === 0;
-            const dbBanner =
-              showBanner && banners.length > 0 ? banners[bannerIdx % banners.length] : null;
-            const fallback =
-              showBanner && banners.length === 0
-                ? FALLBACK_BANNERS[bannerIdx % FALLBACK_BANNERS.length]
-                : null;
-            const overlay = overlays[bannerIdx % overlays.length];
-            const align = aligns[bannerIdx % aligns.length];
-            if (showBanner) bannerIdx++;
+            const banner = showBanner ? banners[bannerIdx++ % banners.length] : null;
 
             return (
               <div key={rowIdx}>
@@ -202,33 +224,9 @@ const ProductFlowGrid = () => {
                   ))}
                 </div>
 
-                {dbBanner && (
+                {banner && (
                   <div className="mt-6 md:mt-8">
-                    <InlineBanner
-                      image={dbBanner.image_url}
-                      titleAr={dbBanner.title_ar || dbBanner.title || ""}
-                      titleRu={dbBanner.title_ru || undefined}
-                      titleEn={dbBanner.title || ""}
-                      subtitleAr={dbBanner.subtitle_ar || undefined}
-                      subtitleRu={dbBanner.subtitle_ru || undefined}
-                      subtitleEn={dbBanner.subtitle || undefined}
-                      link={dbBanner.link || "/products"}
-                      align={align}
-                      overlay={overlay}
-                    />
-                  </div>
-                )}
-                {fallback && (
-                  <div className="mt-6 md:mt-8">
-                    <InlineBanner
-                      image={fallback.image}
-                      titleAr="عروض الجمال الروسي"
-                      titleRu="Русская красота"
-                      titleEn="Russian Beauty Deals"
-                      link={fallback.link}
-                      align={align}
-                      overlay={overlay}
-                    />
+                    <InlineBanner {...banner} />
                   </div>
                 )}
               </div>
