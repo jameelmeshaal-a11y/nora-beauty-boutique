@@ -64,6 +64,7 @@ import PayoutsManager from "@/components/admin/PayoutsManager";
 import InfluencersManager from "@/components/admin/InfluencersManager";
 import SuppliersManager from "@/components/admin/SuppliersManager";
 import AdminReports from "@/components/admin/AdminReports";
+import ProductsManager from "@/components/admin/ProductsManager";
 
 interface Product {
   id: string;
