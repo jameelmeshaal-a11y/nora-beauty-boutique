@@ -183,6 +183,9 @@ const AuthPage = () => {
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
                   </Button>
+                  <a href="/forgot-password" className="block text-center text-sm text-primary hover:underline mt-2">
+                    نسيت كلمة المرور؟
+                  </a>
                 </form>
               </TabsContent>
               

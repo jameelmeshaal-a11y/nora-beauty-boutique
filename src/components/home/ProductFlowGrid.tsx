@@ -41,7 +41,13 @@ const ProductFlowGrid = () => {
   const { language, isRTL } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [variants, setVariants] = useState<Map<string, ProductVariant[]>>(new Map());
+  const [dbBanners, setDbBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from("banners").select("*").eq("type", "inline").eq("is_active", true)
+      .order("sort_order").then(({ data }) => { if (data?.length) setDbBanners(data); });
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -195,12 +201,14 @@ const ProductFlowGrid = () => {
 
         <div className="space-y-6 md:space-y-8">
           {rows.map((row, rowIdx) => {
-            // Insert a banner after every 2nd completed row (rows 2, 4, 6, ...)
             const showBanner = rowIdx > 0 && (rowIdx + 1) % 2 === 0;
-            const banner = showBanner ? banners[bannerIdx++ % banners.length] : null;
+            const dbBanner = showBanner && dbBanners.length
+              ? dbBanners[Math.floor(rowIdx / 2) % dbBanners.length]
+              : null;
+            const staticBanner = showBanner && !dbBanner ? banners[bannerIdx++ % banners.length] : null;
 
             return (
-              <div key={rowIdx}>
+              <div key={rowIdx} className="animate-fade-up" style={{ animationDelay: `${rowIdx * 80}ms` }}>
                 <div className="grid gap-3 md:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {row.map((p) => (
                     <ProductCard
@@ -224,9 +232,14 @@ const ProductFlowGrid = () => {
                   ))}
                 </div>
 
-                {banner && (
+                {dbBanner && (
                   <div className="mt-6 md:mt-8">
-                    <InlineBanner {...banner} />
+                    <InlineBanner bannerData={dbBanner} />
+                  </div>
+                )}
+                {staticBanner && (
+                  <div className="mt-6 md:mt-8">
+                    <InlineBanner {...staticBanner} />
                   </div>
                 )}
               </div>

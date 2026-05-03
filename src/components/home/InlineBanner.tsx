@@ -2,11 +2,20 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 
+interface BannerData {
+  image_url: string;
+  title: string | null;
+  title_ar: string | null;
+  title_ru?: string | null;
+  link?: string | null;
+}
+
 interface InlineBannerProps {
-  image: string;
-  titleAr: string;
+  bannerData?: BannerData;
+  image?: string;
+  titleAr?: string;
   titleRu?: string;
-  titleEn: string;
+  titleEn?: string;
   subtitleAr?: string;
   subtitleRu?: string;
   subtitleEn?: string;
@@ -18,6 +27,7 @@ interface InlineBannerProps {
 }
 
 const InlineBanner = ({
+  bannerData,
   image,
   titleAr,
   titleRu,
@@ -33,7 +43,14 @@ const InlineBanner = ({
 }: InlineBannerProps) => {
   const { language, isRTL } = useLanguage();
 
-  const title = language === "ar" ? titleAr : language === "ru" ? titleRu || titleEn : titleEn;
+  // If bannerData (from DB) is provided, override hardcoded values
+  const finalImage = bannerData?.image_url || image || "";
+  const finalLink = bannerData?.link || link;
+  const finalTitleAr = bannerData?.title_ar || titleAr || "";
+  const finalTitleEn = bannerData?.title || titleEn || "";
+  const finalTitleRu = bannerData?.title_ru || titleRu;
+
+  const title = language === "ar" ? finalTitleAr : language === "ru" ? finalTitleRu || finalTitleEn : finalTitleEn;
   const subtitle =
     language === "ar" ? subtitleAr : language === "ru" ? subtitleRu || subtitleEn : subtitleEn;
   const cta = language === "ar" ? ctaAr : ctaEn;
@@ -54,13 +71,13 @@ const InlineBanner = ({
 
   return (
     <Link
-      to={link}
-      className="block group relative overflow-hidden rounded-3xl shadow-card hover:shadow-russian transition-all duration-500"
+      to={finalLink}
+      className="block group relative overflow-hidden rounded-3xl shadow-card hover:shadow-russian transition-all duration-500 shine-overlay"
     >
       <div className="relative h-56 md:h-72 lg:h-80">
         <img
-          src={image}
-          alt={titleEn}
+          src={finalImage}
+          alt={finalTitleEn}
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms]"
         />
