@@ -71,13 +71,13 @@ const InlineBanner = ({
 
   return (
     <Link
-      to={link}
-      className="block group relative overflow-hidden rounded-3xl shadow-card hover:shadow-russian transition-all duration-500"
+      to={finalLink}
+      className="block group relative overflow-hidden rounded-3xl shadow-card hover:shadow-russian transition-all duration-500 shine-overlay"
     >
       <div className="relative h-56 md:h-72 lg:h-80">
         <img
-          src={image}
-          alt={titleEn}
+          src={finalImage}
+          alt={finalTitleEn}
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms]"
         />

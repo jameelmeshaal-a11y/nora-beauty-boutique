@@ -41,7 +41,13 @@ const ProductFlowGrid = () => {
   const { language, isRTL } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [variants, setVariants] = useState<Map<string, ProductVariant[]>>(new Map());
+  const [dbBanners, setDbBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from("banners").select("*").eq("type", "inline").eq("is_active", true)
+      .order("sort_order").then(({ data }) => { if (data?.length) setDbBanners(data); });
+  }, []);
 
   useEffect(() => {
     (async () => {
